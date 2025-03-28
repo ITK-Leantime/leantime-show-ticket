@@ -188,7 +188,9 @@ class ShowTicket
      *
      * @return array An array of status labels for the given project.
      */
-     // @phpstan-ignore-next-line
+    /**
+     * @phpstan-ignore-next-line
+     */
     public function getStatusLabels(int $projectId): array
     {
         return $this->ticketService->getStatusLabels($projectId);
