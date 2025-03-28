@@ -115,6 +115,7 @@ class ShowTicket
             'description' => $ticket->description ?? '',
             'projectId' => $ticket->projectId ?? session('currentProject'),
             'editorId' => $ticket->editorId ?? '',
+            // @phpstan-ignore-next-line
             'date' => dtHelper()->userNow()->formatDateTimeForDb(),
             'status' => $ticket->status ?? '',
             'planHours' => $ticket->planHours ?? '',
