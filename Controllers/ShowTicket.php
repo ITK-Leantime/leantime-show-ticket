@@ -79,10 +79,8 @@ class ShowTicket extends Controller
         return response()->json(['ticket' => $deleteResult]);
     }
 
-    /**
-     * I stole this from somewhere in leantime. There will be no doc comments.
-     * @phpstan-ignore-next-line
-     */
+    // phpcs:disable
+    /** @phpstan-ignore-next-line */
     private function explodeAndMergeTags(array $dbTagValues, array $mergeInto): array
     {
         foreach ($dbTagValues as $tagGroup) {
@@ -94,6 +92,7 @@ class ShowTicket extends Controller
 
         return $mergeInto;
     }
+    // phpcs:enable
 
     /**
      * get
