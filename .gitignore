@@ -1,0 +1,14 @@
+composer.lock
+vendor
+.DS_Store
+*.cache
+node_modules
+package-lock.json
+.idea/
+dist/*
+
+# Release artifacts
+release/
+checksum.txt
+*.tar.gz
+yarn.lock
