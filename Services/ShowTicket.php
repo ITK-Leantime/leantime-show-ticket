@@ -7,6 +7,7 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse as JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Show ticket services file.
@@ -25,7 +26,7 @@ class ShowTicket
         $this->ticketService = $ticketService;
     }
 
- /**
+    /**
      * @var array<string, string>
      */
     private static array $assets = [
@@ -75,7 +76,7 @@ class ShowTicket
         if ($time === null) {
             return '';
         }
-        return format(value: $time ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+        return format(value: $time, fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
     }
 
     /**
@@ -97,13 +98,13 @@ class ShowTicket
     /**
      * Transform to leantime dates, this is copy pasted from somewhere in leantime.
      *
-     * @param int    $id    the id.
+     * @param string $id    the id.
      * @param string $key   the key of the value to be changed.
      * @param string $value the value to change.
      *
      * @return JsonResponse The JSON response containing the updated ticket.
      */
-    public function saveTicket(int $id, string $key, string $value): JSonResponse
+    public function saveTicket(string $id, string $key, string $value): JSonResponse
     {
         $ticket = $this->ticketService->getTicket($id);
 
@@ -148,11 +149,11 @@ class ShowTicket
     /**
      * Delete ticket.
      *
-     * @param int $id the id of the ticket ot delete.
+     * @param string $id the id of the ticket ot delete.
      *
      * @return JsonResponse containing nothing of value i think.
      */
-    public function deleteTicket(int $id)
+    public function deleteTicket(string $id)
     {
         $result = $this->ticketService->delete($id);
         return response()->json($result);
@@ -187,6 +188,7 @@ class ShowTicket
      *
      * @return array An array of status labels for the given project.
      */
+     // @phpstan-ignore-next-line
     public function getStatusLabels(int $projectId): array
     {
         return $this->ticketService->getStatusLabels($projectId);
@@ -195,7 +197,7 @@ class ShowTicket
     /**
      * Retrieves the priority labels.
      *
-     * @return array An array of priority labels.
+     * @return array|string[] An array of priority labels.
      */
     public function getPriorityLabels(): array
     {

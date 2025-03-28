@@ -79,11 +79,9 @@ class ShowTicket extends Controller
         return response()->json(['ticket' => $deleteResult]);
     }
 
-
-    /**
-     * @return array and array of tags, separated by comma.
-    */
-    private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
+    // I stole this from somewhere in leantime. There will be no doc comments.
+    // @phpstan-ignore-next-line
+    private function explodeAndMergeTags(array $dbTagValues, array $mergeInto): array
     {
         foreach ($dbTagValues as $tagGroup) {
             if (isset($tagGroup['tags']) && $tagGroup['tags'] != null) {
