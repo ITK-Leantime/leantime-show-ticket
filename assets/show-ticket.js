@@ -25,8 +25,8 @@ function saveTicket(input, key, defaultValueInput = null) {
   })
     .then((response) => response.json())
     .then(({ ticket: { original } }) => {
-      input.value = restoreString(original[key]);
-      input.defaultValue = restoreString(original[key]);
+      input.value = original[key];
+      input.defaultValue = original[key];
       saveSuccess(input);
     })
     .catch((error) => {
@@ -39,7 +39,7 @@ function saveTicket(input, key, defaultValueInput = null) {
 }
 
 function deleteTicket() {
-  startSpinner()
+  startSpinner();
   const { id } = document.querySelector("main");
 
   fetch("/ShowTicket/ShowTicket/deleteTicket", {
@@ -54,8 +54,9 @@ function deleteTicket() {
       location.reload();
     })
     .catch((error) => {
-      console.error("Ticket was not deleted:", error)
-    }) .finally(() => stopSpinner());
+      console.error("Ticket was not deleted:", error);
+    })
+    .finally(() => stopSpinner());
 }
 
 function saveDateToFinish(input) {
@@ -90,9 +91,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const statusDefaultValue = document.getElementById("status-select").value;
   const priorityDefaultValue = document.getElementById("priority-select").value;
   const userDefaultValue = document.getElementById("user-select").value;
+  // Right now this breaks any formatting done
+  // leantime uses tox-editor-container, perhaps we should too?
+  window["description-input"].value = restoreString(
+    window["description-input"].value,
+  );
 
   window["headline-input"].addEventListener("change", function () {
-    startSpinner();
     const input = window["headline-input"];
     saveTicket(input, "headline");
   });
@@ -102,61 +107,51 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   window["sprint-select"].addEventListener("change", function () {
-    startSpinner();
     const input = window["sprint-select"];
     saveTicket(input, "sprint");
   });
 
   window["milestone-select"].addEventListener("change", function () {
-    startSpinner();
     const input = window["milestone-select"];
     saveTicket(input, "milestoneid");
   });
 
   window["tags-input"].addEventListener("change", function () {
-    startSpinner();
     const input = window["tags-input"];
     saveTicket(input, "tags");
   });
 
   window["related-tickets-select"].addEventListener("change", function () {
-    startSpinner();
     const input = window["related-tickets-select"];
     saveTicket(input, "dependingTicketId");
   });
 
   window["status-select"].addEventListener("change", function () {
-    startSpinner();
     const input = window["status-select"];
     saveTicket(input, "status", statusDefaultValue);
   });
 
   window["priority-select"].addEventListener("change", function () {
-    startSpinner();
     const input = window["priority-select"];
     saveTicket(input, "priority", priorityDefaultValue);
   });
 
   window["date-to-finish-input"].addEventListener("change", function () {
-    startSpinner();
     const input = window["date-to-finish-input"];
     saveDateToFinish(input);
   });
 
   window["description-input"].addEventListener("change", function () {
-    startSpinner();
     const input = window["description-input"];
     saveTicket(input, "description");
   });
 
   window["plan-hours-input"].addEventListener("change", function () {
-    startSpinner();
     const input = window["plan-hours-input"];
     saveTicket(input, "planHours");
   });
 
   window["user-select"].addEventListener("change", function () {
-    startSpinner();
     const input = window["user-select"];
     saveTicket(input, "editorId", userDefaultValue);
   });

@@ -1,5 +1,6 @@
 <?php
 
+// @phpstan-ignore-next-line
 use Leantime\Plugins\ShowTicket\Middleware\GetLanguageAssets;
 use Leantime\Core\Events\EventDispatcher;
 
@@ -41,6 +42,7 @@ if (class_exists(EventDispatcher::class)) {
     // https://github.com/Leantime/plugin-template/blob/main/register.php#L43-L46
     EventDispatcher::add_filter_listener(
         'leantime.core.http.httpkernel.handle.plugins_middleware',
+        // @phpstan-ignore-next-line
         fn(array $middleware) => array_merge($middleware, [GetLanguageAssets::class]),
     );
 

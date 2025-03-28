@@ -1,36 +1,33 @@
 @extends($layout)
 @section('content')
     <div class="show-ticket">
-    @if (!isset($ticket))
-        <main class="show-ticket-content">
-        <h1>
-        {!! sprintf(
-                __('showTicket.no-ticket'),
-                $ticketIdFromUrl,
-            ) !!}
-            </h1>
-        </main>
-    @endif
-            @if (isset($ticket))
-        <div class="show-ticket-header">
-            <div class="show-ticket-notification">
-                {{ __('showTicket.auto-save-on') }}
-                <i id="spinner" class="spinner fa-solid fa-spinner fa-spin-pulse"></i>
-            </div>
-            <div class="show-ticket-buttons">
-                <button type="button" class="button" id="copy-url-button" onclick='copyCurrentUrl()'>
-                    <span class="sr-only">
-                        {{ __('showTicket.copy-current-url') }}
-                    </span>
-                    <i class="fa fa-link"></i>
-                </button>
+        @if (!isset($ticket))
+            <main class="show-ticket-content">
+                <h1>
+                    {!! sprintf(__('showTicket.no-ticket'), $ticketIdFromUrl) !!}
+                </h1>
+            </main>
+        @endif
+        @if (isset($ticket))
+            <div class="show-ticket-header">
+                <div class="show-ticket-notification">
+                    {{ __('showTicket.auto-save-on') }}
+                    <i id="spinner" class="spinner fa-solid fa-spinner fa-spin-pulse"></i>
+                </div>
+                <div class="show-ticket-buttons">
+                    <button type="button" class="button" id="copy-url-button" onclick='copyCurrentUrl()'>
+                        <span class="sr-only">
+                            {{ __('showTicket.copy-current-url') }}
+                        </span>
+                        <i class="fa fa-link"></i>
+                    </button>
 
-                <button id="delete-ticket" class="button animate-button" type="button">
-                    <span class="sr-only">{{ __('showTicket.delete-ticket') }}</span>
-                    <i class="fa fa-trash"></i>
-                </button>
+                    <button id="delete-ticket" class="button animate-button" type="button">
+                        <span class="sr-only">{{ __('showTicket.delete-ticket') }}</span>
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
             </div>
-        </div>
             <main id="{{ $ticket->id }}" class="show-ticket-content">
                 <h1>{{ $ticket->projectName }}: {{ $ticket->id }}</h1>
                 <label class="sr-only" for="headline-input">
