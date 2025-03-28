@@ -53,7 +53,7 @@ EventDispatcher::add_event_listener(
     'leantime.core.template.tpl.*.afterScriptLibTags',
     function () {
 
-        if (null !== (session('userdata.id')) && str_contains($_SERVER['REQUEST_URI'], '/ShowTicket/showTicket')) {
+        if (null !== (session('userdata.id')) && str_contains($_SERVER['REQUEST_URI'], '/ShowTicket/ShowTicket')) {
             $cssUrl = '/dist/css/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<link rel="stylesheet" href="' . htmlspecialchars($cssUrl) . '"></link>';
             $jsUrl = '/dist/js/show-ticket.js?' . http_build_query(['v' => '%%VERSION%%']);
