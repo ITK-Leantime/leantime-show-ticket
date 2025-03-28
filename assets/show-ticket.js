@@ -39,7 +39,7 @@ function saveTicket(input, key, defaultValueInput = null) {
 }
 
 function deleteTicket() {
-  startSpinner()
+  startSpinner();
   const { id } = document.querySelector("main");
 
   fetch("/ShowTicket/ShowTicket/deleteTicket", {
@@ -54,8 +54,9 @@ function deleteTicket() {
       location.reload();
     })
     .catch((error) => {
-      console.error("Ticket was not deleted:", error)
-    }) .finally(() => stopSpinner());
+      console.error("Ticket was not deleted:", error);
+    })
+    .finally(() => stopSpinner());
 }
 
 function saveDateToFinish(input) {
@@ -92,7 +93,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const userDefaultValue = document.getElementById("user-select").value;
   // Right now this breaks any formatting done
   // leantime uses tox-editor-container, perhaps we should too?
-  window["description-input"].value = restoreString(window["description-input"].value);
+  window["description-input"].value = restoreString(
+    window["description-input"].value,
+  );
 
   window["headline-input"].addEventListener("change", function () {
     const input = window["headline-input"];

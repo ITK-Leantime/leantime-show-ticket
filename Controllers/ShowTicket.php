@@ -32,12 +32,14 @@ class ShowTicket extends Controller
     /**
      * constructor
      *
-     * @param showTicketService $showTicketService
+     * @param ShowTicketService $showTicketService
      * @param TicketService     $ticketService
+     * @param SprintService     $sprintService
      * @param UserService       $userService
      * @param LanguageCore      $language
      * @param Template          $template
      * @param TicketRepository  $ticketRepository
+     * @param FileRepository    $filesRepo
      * @return void
      */
     public function init(ShowTicketService $showTicketService, TicketService $ticketService, SprintService $sprintService, UserService $userService, LanguageCore $language, Template $template, TicketRepository $ticketRepository, FileRepository $filesRepo): void
@@ -78,9 +80,9 @@ class ShowTicket extends Controller
     }
 
 
-        /**
-         * @api
-         */
+    /**
+     * @return array and array of tags, separated by comma.
+    */
     private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
     {
         foreach ($dbTagValues as $tagGroup) {
