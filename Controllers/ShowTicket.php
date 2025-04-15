@@ -2,6 +2,7 @@
 
 namespace Leantime\Plugins\ShowTicket\Controllers;
 
+use Leantime\Core\Controller\Frontcontroller;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,8 @@ use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Auth\Models\Roles;
 
 /**
  * ShowTicket controller.
@@ -95,6 +98,24 @@ class ShowTicket extends Controller
     // phpcs:enable
 
     /**
+     * @return Response
+     * @throws \Exception
+     */
+    public function post(): Response
+    {
+        if (!AuthService::userIsAtLeast(Roles::$editor)) {
+            return $this->tpl->displayJson(['Error' => 'Not Authorized'], 403);
+        }
+$redirectUrl = BASE_URL . '/ShowTicket/ShowTicket';
+        if (isset($_POST['ticket-id'])) {
+                $redirectUrl = $redirectUrl . '?ticketId=' . $_POST['ticket-id'];
+        }
+
+        return Frontcontroller::redirect($redirectUrl);
+    }
+
+
+    /**
      * get
      *
      * @return Response
@@ -126,6 +147,7 @@ class ShowTicket extends Controller
                 $this->tpl->assign('milestones', $milestones);
                 $this->tpl->assign('files', $this->filesRepo->getFilesByModule('ticket', $ticket->id));
             }
+            
             $this->tpl->assign('ticketIdFromUrl', $_GET['ticketId']);
         }
         // Ticket assigned to the template
