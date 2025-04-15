@@ -31,8 +31,8 @@ class ShowTicket
      */
     private static array $assets = [
         // source => target
-        __DIR__ . '/../assets/show-ticket.css' => APP_ROOT . '/public/dist/css/show-ticket.css',
-        __DIR__ . '/../assets/show-ticket.js' => APP_ROOT . '/public/dist/js/show-ticket.js',
+        __DIR__ . '/../dist/show-ticket.css' => APP_ROOT . '/public/dist/css/show-ticket.css',
+        __DIR__ . '/../dist/show-ticket.js' => APP_ROOT . '/public/dist/js/show-ticket.js',
     ];
 
     /**
