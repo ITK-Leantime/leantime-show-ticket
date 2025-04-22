@@ -93,8 +93,7 @@ function deleteTicket() {
     .finally(() => stopSpinner());
 }
 
-async function saveDateToFinish(input, id = null) {
-  const defaultValue = input.defaultValue;
+async function saveDateToFinish(input, defaultValue, id = null) {
   const { value } = input;
 
   const { original: ticket = {}, error } = await saveTicket(
@@ -206,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window["date-to-finish-input"].addEventListener("change", function () {
     const input = window["date-to-finish-input"];
-    saveDateToFinish(input);
+    saveDateToFinish(input, input.defaultValue);
   });
 
   window["plan-hours-input"].addEventListener("change", function () {
@@ -225,34 +224,64 @@ document.addEventListener("DOMContentLoaded", function () {
     .map(({ id }) => id);
   // Add event listeners to sub task children, this could potentially be a lot, I don't know
   // If users a prone to subtasks in leantime. Perhaps we should limit this some time.
+  let subtaskDefaultValues = {};
   subtasksIds.forEach((subtaskId) => {
     const id = subtaskId.replace("subtask-", "");
+    subtaskDefaultValues[`subtask-status-select-${id}`] =
+      window[`subtask-status-select-${id}`].value;
+    subtaskDefaultValues[`subtask-user-select-${id}`] =
+      window[`subtask-user-select-${id}`].value;
+    subtaskDefaultValues[`subtask-date-to-finish-input-${id}`] =
+      window[`subtask-date-to-finish-input-${id}`].value;
+    subtaskDefaultValues[`subtask-plan-hours-input-${id}`] =
+      window[`subtask-plan-hours-input-${id}`].value;
+
     window[`subtask-status-select-${id}`].addEventListener(
       "change",
       function () {
         const input = window[`subtask-status-select-${id}`];
-        simpleSaveTicketWrapper(input, "status", null, id);
+        simpleSaveTicketWrapper(
+          input,
+          "status",
+          subtaskDefaultValues[`subtask-status-select-${id}`],
+          id,
+        );
       },
     );
     window[`subtask-user-select-${id}`].addEventListener("change", function () {
       const input = window[`subtask-user-select-${id}`];
-      simpleSaveTicketWrapper(input, "editorId", null, id);
+      simpleSaveTicketWrapper(
+        input,
+        "editorId",
+        subtaskDefaultValues[`subtask-user-select-${id}`],
+        id,
+      );
     });
     window[`subtask-date-to-finish-input-${id}`].addEventListener(
       "change",
       function () {
         const input = window[`subtask-date-to-finish-input-${id}`];
-        saveDateToFinish(input, id);
+        saveDateToFinish(
+          input,
+          subtaskDefaultValues[`subtask-date-to-finish-input-${id}`],
+          id,
+        );
       },
     );
     window[`subtask-plan-hours-input-${id}`].addEventListener(
       "change",
       function () {
         const input = window[`subtask-plan-hours-input-${id}`];
-        simpleSaveTicketWrapper(input, "planHours", null, id);
+        simpleSaveTicketWrapper(
+          input,
+          "planHours",
+          subtaskDefaultValues[`subtask-plan-hours-input-${id}`],
+          id,
+        );
       },
     );
   });
+  console.log(subtaskDefaultValues);
 });
 
 // Spinner animation in top bar
