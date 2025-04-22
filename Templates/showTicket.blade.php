@@ -1,14 +1,31 @@
 @extends($layout)
 @section('content')
     <div class="show-ticket">
-        @if (!isset($ticket))
+        @if (!isset($ticketIdFromUrl))
+            <form method="POST">
+                <main class="show-ticket-content">
+                    <h1>
+                        {!! sprintf(__('showTicket.ticket-id')) !!}
+                    </h1>
+                    <label class="sr-only" for="ticket-id">
+                        {{ __('showTicket.ticket-id') }}
+                    </label>
+                    <div class="find-ticket-container">
+                        <input type="number" name="ticket-id" class="input" id="ticket-id" />
+                        <button class="button" type="submit">{{ __('showTicket.find-ticket') }}
+                        </button>
+                    </div>
+                </main>
+            </form>
+        @endif
+        @if (!isset($ticket) && isset($ticketIdFromUrl))
             <main class="show-ticket-content">
                 <h1>
                     {!! sprintf(__('showTicket.no-ticket'), $ticketIdFromUrl) !!}
                 </h1>
             </main>
         @endif
-        @if (isset($ticket))
+        @if (isset($ticket) && isset($ticketIdFromUrl))
             <div class="show-ticket-header">
                 <div class="show-ticket-notification">
                     {{ __('showTicket.auto-save-on') }}

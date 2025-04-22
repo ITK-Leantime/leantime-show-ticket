@@ -31,6 +31,28 @@
   position: relative;
 }
 
+.find-ticket-container {
+  display: flex;
+  align-items: baseline;
+}
+
+.find-ticket-container .button {
+  border: 1px solid var(--light-gray);
+  border-left: 0px;
+  background-color: white;
+  width: 120px;
+  height: 36px;
+}
+
+.find-ticket-container .button:hover {
+  color: grey;
+}
+
+.find-ticket-container .input {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
 .show-ticket-notification {
   border: 1px solid var(--primary-color);
   border-radius: 5px;
