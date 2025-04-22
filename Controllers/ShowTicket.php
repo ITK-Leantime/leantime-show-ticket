@@ -106,7 +106,7 @@ class ShowTicket extends Controller
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
             return $this->tpl->displayJson(['Error' => 'Not Authorized'], 403);
         }
-$redirectUrl = BASE_URL . '/ShowTicket/ShowTicket';
+        $redirectUrl = BASE_URL . '/ShowTicket/ShowTicket';
         if (isset($_POST['ticket-id'])) {
                 $redirectUrl = $redirectUrl . '?ticketId=' . $_POST['ticket-id'];
         }
@@ -147,7 +147,7 @@ $redirectUrl = BASE_URL . '/ShowTicket/ShowTicket';
                 $this->tpl->assign('milestones', $milestones);
                 $this->tpl->assign('files', $this->filesRepo->getFilesByModule('ticket', $ticket->id));
             }
-            
+
             $this->tpl->assign('ticketIdFromUrl', $_GET['ticketId']);
         }
         // Ticket assigned to the template
