@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* [PR-5](https://github.com/ITK-Leantime/leantime-show-ticket/pull/5)
+  Add sub tasks to UI
 * [PR-4](https://github.com/ITK-Leantime/leantime-show-ticket/pull/4)
   add leantime link
 * [PR-3](https://github.com/ITK-Leantime/leantime-show-ticket/pull/3)
