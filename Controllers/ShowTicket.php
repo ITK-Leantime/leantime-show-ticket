@@ -146,6 +146,7 @@ class ShowTicket extends Controller
                 $milestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $ticket->projectId]);
                 $this->tpl->assign('milestones', $milestones);
                 $this->tpl->assign('files', $this->filesRepo->getFilesByModule('ticket', $ticket->id));
+                $this->tpl->assign('subtasks', $this->showTicketService->getAllSubtasks($ticket->id));
             }
 
             $this->tpl->assign('ticketIdFromUrl', $_GET['ticketId']);

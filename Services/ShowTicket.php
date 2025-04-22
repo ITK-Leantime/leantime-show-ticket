@@ -198,6 +198,18 @@ class ShowTicket
     // phpcs:enable
 
     /**
+     * Retrieves the subtasks of the ticket.
+     *
+     * @param int $ticketId The id of the ticket.
+     *
+     * @return array|boolean An array of subtasks, or false.
+     */
+    public function getAllSubtasks(int $ticketId): false|array
+    {
+        return $this->ticketService->getAllSubtasks($ticketId);
+    }
+
+    /**
      * Retrieves the priority labels.
      *
      * @return array|string[] An array of priority labels.

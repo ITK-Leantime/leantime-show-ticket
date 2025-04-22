@@ -25,14 +25,16 @@ async function copyCurrentUrl() {
   }
 }
 
-async function simpleSaveTicketWrapper(input, key, defaultValueInput = null) {
+async function simpleSaveTicketWrapper(
+  input,
+  key,
+  defaultValueInput = null,
+  inputId = null,
+) {
+  const id = inputId ?? document.querySelector("main").id;
   const defaultValue = defaultValueInput ?? input.defaultValue;
   const { value } = input;
-  const { original: ticket = {}, error } = await saveTicket(
-    value,
-    key,
-    defaultValue,
-  );
+  const { original: ticket = {}, error } = await saveTicket(value, key, id);
 
   if (error) {
     input.value = defaultValue;
@@ -45,9 +47,9 @@ async function simpleSaveTicketWrapper(input, key, defaultValueInput = null) {
   }
 }
 
-async function saveTicket(value, key) {
+async function saveTicket(value, key, inputId) {
   startSpinner();
-  const { id } = document.querySelector("main");
+  const id = inputId ?? document.querySelector("main").id;
   try {
     const response = await fetch("/ShowTicket/ShowTicket/saveTicket", {
       method: "POST",
@@ -91,13 +93,14 @@ function deleteTicket() {
     .finally(() => stopSpinner());
 }
 
-async function saveDateToFinish(input) {
+async function saveDateToFinish(input, id = null) {
   const defaultValue = input.defaultValue;
   const { value } = input;
 
   const { original: ticket = {}, error } = await saveTicket(
     formatDate(value),
     "dateToFinish",
+    id,
   );
 
   if (error) {
@@ -214,6 +217,41 @@ document.addEventListener("DOMContentLoaded", function () {
   window["user-select"].addEventListener("change", function () {
     const input = window["user-select"];
     simpleSaveTicketWrapper(input, "editorId", userDefaultValue);
+  });
+
+  // Get all elements with ids that start with subtask and is followed by *some* numbers.
+  const subtasksIds = Array.from(document.querySelectorAll('[id^="subtask-"]'))
+    .filter(({ id }) => /^subtask-\d+$/.test(id))
+    .map(({ id }) => id);
+  // Add event listeners to sub task children, this could potentially be a lot, I don't know
+  // If users a prone to subtasks in leantime. Perhaps we should limit this some time.
+  subtasksIds.forEach((subtaskId) => {
+    const id = subtaskId.replace("subtask-", "");
+    window[`subtask-status-select-${id}`].addEventListener(
+      "change",
+      function () {
+        const input = window[`subtask-status-select-${id}`];
+        simpleSaveTicketWrapper(input, "status", null, id);
+      },
+    );
+    window[`subtask-user-select-${id}`].addEventListener("change", function () {
+      const input = window[`subtask-user-select-${id}`];
+      simpleSaveTicketWrapper(input, "editorId", null, id);
+    });
+    window[`subtask-date-to-finish-input-${id}`].addEventListener(
+      "change",
+      function () {
+        const input = window[`subtask-date-to-finish-input-${id}`];
+        saveDateToFinish(input, id);
+      },
+    );
+    window[`subtask-plan-hours-input-${id}`].addEventListener(
+      "change",
+      function () {
+        const input = window[`subtask-plan-hours-input-${id}`];
+        simpleSaveTicketWrapper(input, "planHours", null, id);
+      },
+    );
   });
 });
 

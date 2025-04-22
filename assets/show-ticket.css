@@ -128,6 +128,38 @@
   flex: 1;
 }
 
+.sub-tasks {
+  width: 50%;
+}
+.sub-tasks .sub-task-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.sub-task .font-bold {
+  font-weight: 400;
+}
+
+.sub-task h3 {
+  color: var(--dark-text-color);
+  border-bottom: 1px solid var(--border-color);
+  margin: 10px 0;
+  line-height: 40px;
+}
+
+.sub-task {
+  background: #f8fafc;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.sub-header {
+  margin-top: 30px;
+}
+
 /* Remove some branding */
 .tox-promotion {
   display: none;
