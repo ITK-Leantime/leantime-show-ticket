@@ -57,9 +57,10 @@
                 </label>
                 {{-- The below is a wrapper to show the success/error animation, it could be improved --}}
                 <div class="rich-text-success" id="rich-text-success">
-                {{-- this textarea will be a rich text editor, init in show-ticket.js --}}
-                <textarea defaultValue="{{ $ticket->description }}" type="text" class="textarea"
-                    id="description-input">{{ $ticket->description }}</textarea></div>
+                    {{-- this textarea will be a rich text editor, init in show-ticket.js --}}
+                    <textarea defaultValue="{{ $ticket->description }}" type="text" class="textarea"
+                        id="description-input">{{ $ticket->description }}</textarea>
+                </div>
                 <div class="label-input-container">
                     <label for="status-select">{{ __('showTicket.status-label') }}</label>
                     <select defaultValue="{{ $ticket->status }}" id="status-select" class="select">
