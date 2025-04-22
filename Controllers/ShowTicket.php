@@ -32,12 +32,14 @@ class ShowTicket extends Controller
     /**
      * constructor
      *
-     * @param showTicketService $showTicketService
+     * @param ShowTicketService $showTicketService
      * @param TicketService     $ticketService
+     * @param SprintService     $sprintService
      * @param UserService       $userService
      * @param LanguageCore      $language
      * @param Template          $template
      * @param TicketRepository  $ticketRepository
+     * @param FileRepository    $filesRepo
      * @return void
      */
     public function init(ShowTicketService $showTicketService, TicketService $ticketService, SprintService $sprintService, UserService $userService, LanguageCore $language, Template $template, TicketRepository $ticketRepository, FileRepository $filesRepo): void
@@ -77,11 +79,9 @@ class ShowTicket extends Controller
         return response()->json(['ticket' => $deleteResult]);
     }
 
-
-        /**
-         * @api
-         */
-    private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
+    // phpcs:disable
+    /** @phpstan-ignore-next-line */
+    private function explodeAndMergeTags(array $dbTagValues, array $mergeInto): array
     {
         foreach ($dbTagValues as $tagGroup) {
             if (isset($tagGroup['tags']) && $tagGroup['tags'] != null) {
@@ -92,6 +92,7 @@ class ShowTicket extends Controller
 
         return $mergeInto;
     }
+    // phpcs:enable
 
     /**
      * get

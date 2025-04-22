@@ -12,7 +12,8 @@ git clone https://github.com/ITK-Leantime/leantime-show-ticket.git app/Plugins/S
 
 Install the plugin through Leantime in your web browser.
 
-The install process symlinks the built file assets/show-ticket.js with public/dist/js/show-ticket.js (the same with `.css`) in leantime.
+The install process symlinks the built file assets/show-ticket.js with public/dist/js/show-ticket.js (the same with
+`.css`) in leantime.
 
 Run composer install
 
@@ -90,8 +91,8 @@ docker compose build && docker compose run --rm php bin/create-release dev-test
 ```
 
 The create-release script replaces `@@VERSION@@` in
-[register.php](https://github.com/ITK-Leantime/leantime-show-ticket/blob/develop/register.php#L57-L59)
-with the tag provided (in the above it is `dev-test`).
+[register.php](https://github.com/ITK-Leantime/leantime-show-ticket/blob/develop/register.php#L57-L59) with the tag
+provided (in the above it is `dev-test`).
 
 ## Deploy
 
