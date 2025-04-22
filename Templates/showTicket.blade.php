@@ -2,20 +2,20 @@
 @section('content')
     <div class="show-ticket">
         @if (!isset($ticketIdFromUrl))
-        <form method="POST">
-            <main class="show-ticket-content">
-                <h1>
-                    {!! sprintf(__('showTicket.ticket-id')) !!}
-                </h1>
-                 <label class="sr-only" for="ticket-id">
-                    {{ __('showTicket.ticket-id') }}
-                </label>
-                <div class="find-ticket-container">
-                <input type="number" name="ticket-id" class="input" id="ticket-id" />
-                <button class="button" type="submit">{{ __('showTicket.find-ticket') }}
-                </button>
-                </div>
-            </main>
+            <form method="POST">
+                <main class="show-ticket-content">
+                    <h1>
+                        {!! sprintf(__('showTicket.ticket-id')) !!}
+                    </h1>
+                    <label class="sr-only" for="ticket-id">
+                        {{ __('showTicket.ticket-id') }}
+                    </label>
+                    <div class="find-ticket-container">
+                        <input type="number" name="ticket-id" class="input" id="ticket-id" />
+                        <button class="button" type="submit">{{ __('showTicket.find-ticket') }}
+                        </button>
+                    </div>
+                </main>
             </form>
         @endif
         @if (!isset($ticket) && isset($ticketIdFromUrl))
