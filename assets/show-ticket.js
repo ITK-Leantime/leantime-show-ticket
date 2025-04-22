@@ -1,3 +1,18 @@
+import "tinymce/tinymce";
+import "tinymce/icons/default";
+import "tinymce/themes/silver";
+import "tinymce/models/dom";
+
+import "tinymce/plugins/link";
+import "tinymce/plugins/table";
+import "tinymce/plugins/code";
+import "tinymce/skins/ui/oxide/skin.css";
+import "tinymce/skins/content/default/content.css";
+import "tinymce/plugins/advlist";
+import "tinymce/plugins/lists";
+import "tinymce/plugins/code";
+import DOMPurify from "dompurify";
+
 async function copyCurrentUrl() {
   const url = document.location.href;
   const button = window["copy-url-button"];
@@ -10,32 +25,49 @@ async function copyCurrentUrl() {
   }
 }
 
-function saveTicket(input, key, defaultValueInput = null) {
-  startSpinner();
-  const { id } = document.querySelector("main");
+async function simpleSaveTicketWrapper(input, key, defaultValueInput = null) {
   const defaultValue = defaultValueInput ?? input.defaultValue;
   const { value } = input;
+  const { original: ticket = {}, error } = await saveTicket(
+    value,
+    key,
+    defaultValue,
+  );
 
-  fetch("/ShowTicket/ShowTicket/saveTicket", {
-    method: "POST",
-    body: JSON.stringify({ key, value, id }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then(({ ticket: { original } }) => {
-      input.value = original[key];
-      input.defaultValue = original[key];
-      saveSuccess(input);
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
-      saveError(input);
-      input.value = defaultValue;
-      input.defaultValue = defaultValue;
-    })
-    .finally(() => stopSpinner());
+  if (error) {
+    input.value = defaultValue;
+    input.defaultValue = defaultValue;
+    saveError(input);
+  } else if (ticket) {
+    input.value = ticket[key];
+    input.defaultValue = ticket[key];
+    saveSuccess(input);
+  }
+}
+
+async function saveTicket(value, key) {
+  startSpinner();
+  const { id } = document.querySelector("main");
+  try {
+    const response = await fetch("/ShowTicket/ShowTicket/saveTicket", {
+      method: "POST",
+      body: JSON.stringify({ key, value, id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const { ticket } = await response.json();
+
+    stopSpinner();
+    return ticket;
+  } catch (error) {
+    stopSpinner();
+    return { error: true, errorText: error };
+  }
 }
 
 function deleteTicket() {
@@ -59,81 +91,108 @@ function deleteTicket() {
     .finally(() => stopSpinner());
 }
 
-function saveDateToFinish(input) {
-  startSpinner();
-  const { id } = document.querySelector("main");
+async function saveDateToFinish(input) {
   const defaultValue = input.defaultValue;
   const { value } = input;
 
-  fetch("/ShowTicket/ShowTicket/saveTicket", {
-    method: "POST",
-    body: JSON.stringify({ key: "dateToFinish", value: formatDate(value), id }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then(({ ticket: { original } }) => {
-      input.value = formatDateToDatetimeInput(original.dateToFinish);
-      input.defaultValue = formatDateToDatetimeInput(original.dateToFinish);
-      saveSuccess(input);
-    })
-    .catch((error) => {
-      console.error("Error fetching projects:", error);
-      input.value = defaultValue;
-      input.defaultValue = defaultValue;
-      saveError(input);
-    })
-    .finally(() => stopSpinner());
+  const { original: ticket = {}, error } = await saveTicket(
+    formatDate(value),
+    "dateToFinish",
+  );
+
+  if (error) {
+    input.value = defaultValue;
+    input.defaultValue = defaultValue;
+    saveError(input);
+  } else if (ticket) {
+    input.value = formatDateToDatetimeInput(ticket.dateToFinish);
+    input.defaultValue = formatDateToDatetimeInput(ticket.dateToFinish);
+    saveSuccess(input);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  // Some default values, if there is a save error.
+  const descriptionDefaultValue = tinymce?.activeEditor?.getContent();
   const statusDefaultValue = document.getElementById("status-select").value;
   const priorityDefaultValue = document.getElementById("priority-select").value;
   const userDefaultValue = document.getElementById("user-select").value;
-  // Right now this breaks any formatting done
-  // leantime uses tox-editor-container, perhaps we should too?
-  window["description-input"].value = restoreString(
-    window["description-input"].value,
-  );
 
-  window["headline-input"].addEventListener("change", function () {
-    const input = window["headline-input"];
-    saveTicket(input, "headline");
+  // tinyMCE for rich text description edit
+  tinymce.init({
+    selector: "#description-input",
+    plugins: "link table code",
+    toolbar:
+      "undo redo | formatselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | code",
+    height: 300,
+    branding: false,
+    skin: false,
+    content_css: false,
+    license_key: "gpl",
+    setup: function (editor) {
+      editor.on("change", async function () {
+        const content = tinymce.activeEditor.getContent();
+        const sanitizedContent = DOMPurify.sanitize(content);
+
+        const { original: ticket = {}, error } = await saveTicket(
+          sanitizedContent,
+          "description",
+        );
+        if (error) {
+          tinymce.activeEditor.setContent(descriptionDefaultValue);
+          saveError(window["rich-text-success"]);
+        } else if (ticket) {
+          tinymce.activeEditor.setContent(ticket.description);
+          saveSuccess(window["rich-text-success"]);
+        }
+      });
+    },
+  });
+
+  // Event listeners
+  // Buttons in top bar
+  window["copy-url-button"].addEventListener("click", function () {
+    copyCurrentUrl();
   });
 
   window["delete-ticket"].addEventListener("click", function () {
     deleteTicket();
   });
 
+  // The following are much alike, and is change in the different inputs
+  window["headline-input"].addEventListener("change", function () {
+    const input = window["headline-input"];
+    simpleSaveTicketWrapper(input, "headline");
+  });
+
   window["sprint-select"].addEventListener("change", function () {
     const input = window["sprint-select"];
-    saveTicket(input, "sprint");
+    simpleSaveTicketWrapper(input, "sprint");
   });
 
   window["milestone-select"].addEventListener("change", function () {
     const input = window["milestone-select"];
-    saveTicket(input, "milestoneid");
+    simpleSaveTicketWrapper(input, "milestoneid");
   });
 
   window["tags-input"].addEventListener("change", function () {
     const input = window["tags-input"];
-    saveTicket(input, "tags");
+    simpleSaveTicketWrapper(input, "tags");
   });
 
   window["related-tickets-select"].addEventListener("change", function () {
     const input = window["related-tickets-select"];
-    saveTicket(input, "dependingTicketId");
+    simpleSaveTicketWrapper(input, "dependingTicketId");
   });
 
   window["status-select"].addEventListener("change", function () {
     const input = window["status-select"];
-    saveTicket(input, "status", statusDefaultValue);
+    simpleSaveTicketWrapper(input, "status", statusDefaultValue);
   });
 
   window["priority-select"].addEventListener("change", function () {
     const input = window["priority-select"];
-    saveTicket(input, "priority", priorityDefaultValue);
+    simpleSaveTicketWrapper(input, "priority", priorityDefaultValue);
   });
 
   window["date-to-finish-input"].addEventListener("change", function () {
@@ -141,22 +200,18 @@ document.addEventListener("DOMContentLoaded", function () {
     saveDateToFinish(input);
   });
 
-  window["description-input"].addEventListener("change", function () {
-    const input = window["description-input"];
-    saveTicket(input, "description");
-  });
-
   window["plan-hours-input"].addEventListener("change", function () {
     const input = window["plan-hours-input"];
-    saveTicket(input, "planHours");
+    simpleSaveTicketWrapper(input, "planHours");
   });
 
   window["user-select"].addEventListener("change", function () {
     const input = window["user-select"];
-    saveTicket(input, "editorId", userDefaultValue);
+    simpleSaveTicketWrapper(input, "editorId", userDefaultValue);
   });
 });
 
+// Spinner animation in top bar
 function startSpinner() {
   window["spinner"].style.display = "flex";
 }
@@ -165,6 +220,7 @@ function stopSpinner() {
   window["spinner"].style.display = "none";
 }
 
+// Save animations from project overview
 function saveSuccess(elem) {
   elem.classList.add("save-success");
 
@@ -181,12 +237,7 @@ function saveError(elem) {
   }, 1000);
 }
 
-function restoreString(htmlString) {
-  const div = document.createElement("div");
-  div.innerHTML = htmlString;
-  return div.textContent || div.innerText;
-}
-
+// Stupid leantime dates confusing me, maybe these formatting functions are correct, I sure hope so.
 function formatDate(date) {
   const localDate = new Date(date);
   const yyyy = localDate.getFullYear();

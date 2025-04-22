@@ -32,7 +32,7 @@
                     <i id="spinner" class="spinner fa-solid fa-spinner fa-spin-pulse"></i>
                 </div>
                 <div class="show-ticket-buttons">
-                    <button type="button" class="button" id="copy-url-button" onclick='copyCurrentUrl()'>
+                    <button type="button" class="button" id="copy-url-button">
                         <span class="sr-only">
                             {{ __('showTicket.copy-current-url') }}
                         </span>
@@ -55,8 +55,12 @@
                 <label class="sr-only" for="description-input">
                     {{ __('showTicket.description-label') }}
                 </label>
-                <textarea defaultValue="{{ $ticket->description }}" type="text" class="textarea"
-                    id="description-input">{{ $ticket->description }}</textarea>
+                {{-- The below is a wrapper to show the success/error animation, it could be improved --}}
+                <div class="rich-text-success" id="rich-text-success">
+                    {{-- this textarea will be a rich text editor, init in show-ticket.js --}}
+                    <textarea defaultValue="{{ $ticket->description }}" type="text" class="textarea"
+                        id="description-input">{{ $ticket->description }}</textarea>
+                </div>
                 <div class="label-input-container">
                     <label for="status-select">{{ __('showTicket.status-label') }}</label>
                     <select defaultValue="{{ $ticket->status }}" id="status-select" class="select">
