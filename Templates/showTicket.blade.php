@@ -32,6 +32,12 @@
                     <i id="spinner" class="spinner fa-solid fa-spinner fa-spin-pulse"></i>
                 </div>
                 <div class="show-ticket-buttons">
+                    <button type="button" class="button" id="leantime-modal-button">
+                        <span class="sr-only">
+                            {{ __('showTicket.open-task-leantime') }}
+                        </span>
+                        <i class="fa fa-l"></i>
+                    </button>
                     <button type="button" class="button" id="copy-url-button">
                         <span class="sr-only">
                             {{ __('showTicket.copy-current-url') }}

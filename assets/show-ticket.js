@@ -151,6 +151,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event listeners
   // Buttons in top bar
+  window["leantime-modal-button"].addEventListener("click", function () {
+    const { id } = document.querySelector("main");
+    const newUrl = `${window.location.origin}#/tickets/showTicket/${id}`;
+    window.location.assign(newUrl);
+  });
+
   window["copy-url-button"].addEventListener("click", function () {
     copyCurrentUrl();
   });

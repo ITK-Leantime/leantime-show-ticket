@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* [PR-4](https://github.com/ITK-Leantime/leantime-show-ticket/pull/4)
+  add leantime link
 * [PR-3](https://github.com/ITK-Leantime/leantime-show-ticket/pull/3)
   node_modules/webpack introduced
   tinymce introduced to create rich text
