@@ -188,61 +188,63 @@
                     </div>
                 @endif
                 <div>
-                    <h2 class="sub-header">{{ __('showTicket.subtasks-headline') }}</h2>
-                    <div class="sub-tasks">
-                        @foreach ($subtasks as $subtask)
-                            <div class="sub-task" id='subtask-{{ $subtask['id'] }}'>
-                                <div class="font-bold">{{ $subtask['projectName'] }}: {{ $subtask['id'] }}</div>
-                                <h3>{{ $subtask['headline'] }}</h3>
+                    @if (count($subtasks) > 0)
+                        <h2 class="sub-header">{{ __('showTicket.subtasks-headline') }}</h2>
+                        <div class="sub-tasks">
+                            @foreach ($subtasks as $subtask)
+                                <div class="sub-task" id='subtask-{{ $subtask['id'] }}'>
+                                    <div class="font-bold">{{ $subtask['projectName'] }}: {{ $subtask['id'] }}</div>
+                                    <h3>{{ $subtask['headline'] }}</h3>
 
-                                <div class="sub-task-controls">
-                                    <label class="sr-only"
-                                        for='subtask-status-select-{{ $subtask['id'] }}'>{{ __('showTicket.status-label') }}</label>
-                                    <select defaultValue="{{ $subtask['status'] }}"
-                                        id='subtask-status-select-{{ $subtask['id'] }}' class="select">
-                                        @foreach ($statusLabels as $key => $statusLabel)
-                                            <option value="{{ $key }}"
-                                                {{ $subtask['status'] == $key ? 'selected' : '' }}>
-                                                {{ $statusLabel['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-
-                                    <label class="sr-only"
-                                        for='subtask-user-select-{{ $subtask['id'] }}'>{{ __('showTicket.editor-label') }}</label>
-                                    <select defaultValue="{{ $subtask['editorId'] }}" class="select"
-                                        id='subtask-user-select-{{ $subtask['id'] }}'>
-                                        @foreach ($allUsers as $user)
-                                            <option value={{ $user['id'] }}
-                                                {{ $subtask['editorId'] == $user['id'] ? 'selected' : '' }}>
-                                                {{ $user['firstname'] }}
-                                                {{ $user['lastname'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    @php
-                                        $subtaskDateToFinish = $subtask['dateToFinish'] == '0000-00-00 00:00:00' ? '' : strtok($subtask['dateToFinish'], ' ');
-                                    @endphp
-                                    <label class="sr-only"
-                                        for='subtask-date-to-finish-input-{{ $subtask['id'] }}'>{{ __('showTicket.date-to-finish-label') }}</label>
-                                    <input type="date" defaultValue="{{ $subtask['dateToFinish'] }}" type="text"
-                                        class="input" id='subtask-date-to-finish-input-{{ $subtask['id'] }}'
-                                        value='{{ $subtaskDateToFinish }}' />
+                                    <div class="sub-task-controls">
+                                        <label class="sr-only"
+                                            for='subtask-status-select-{{ $subtask['id'] }}'>{{ __('showTicket.status-label') }}</label>
+                                        <select defaultValue="{{ $subtask['status'] }}"
+                                            id='subtask-status-select-{{ $subtask['id'] }}' class="select">
+                                            @foreach ($statusLabels as $key => $statusLabel)
+                                                <option value="{{ $key }}"
+                                                    {{ $subtask['status'] == $key ? 'selected' : '' }}>
+                                                    {{ $statusLabel['name'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
 
 
-                                    <label class="sr-only"
-                                        for='subtask-plan-hours-input-{{ $subtask['id'] }}'>{{ __('showTicket.plan-hours-label') }}</label>
-                                    <input defaultValue="{{ $subtask['planHours'] }}" type="text" class="input"
-                                        id='subtask-plan-hours-input-{{ $subtask['id'] }}'
-                                        value='{{ $subtask['planHours'] }}' />
+                                        <label class="sr-only"
+                                            for='subtask-user-select-{{ $subtask['id'] }}'>{{ __('showTicket.editor-label') }}</label>
+                                        <select defaultValue="{{ $subtask['editorId'] }}" class="select"
+                                            id='subtask-user-select-{{ $subtask['id'] }}'>
+                                            @foreach ($allUsers as $user)
+                                                <option value={{ $user['id'] }}
+                                                    {{ $subtask['editorId'] == $user['id'] ? 'selected' : '' }}>
+                                                    {{ $user['firstname'] }}
+                                                    {{ $user['lastname'] }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                        @php
+                                            $subtaskDateToFinish = $subtask['dateToFinish'] == '0000-00-00 00:00:00' ? '' : strtok($subtask['dateToFinish'], ' ');
+                                        @endphp
+                                        <label class="sr-only"
+                                            for='subtask-date-to-finish-input-{{ $subtask['id'] }}'>{{ __('showTicket.date-to-finish-label') }}</label>
+                                        <input type="date" defaultValue="{{ $subtask['dateToFinish'] }}" type="text"
+                                            class="input" id='subtask-date-to-finish-input-{{ $subtask['id'] }}'
+                                            value='{{ $subtaskDateToFinish }}' />
 
 
+                                        <label class="sr-only"
+                                            for='subtask-plan-hours-input-{{ $subtask['id'] }}'>{{ __('showTicket.plan-hours-label') }}</label>
+                                        <input defaultValue="{{ $subtask['planHours'] }}" type="text" class="input"
+                                            id='subtask-plan-hours-input-{{ $subtask['id'] }}'
+                                            value='{{ $subtask['planHours'] }}' />
+
+
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             </main>
         @endif

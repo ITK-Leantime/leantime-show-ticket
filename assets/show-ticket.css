@@ -71,6 +71,7 @@
 /* Header */
 .show-ticket-header {
   position: sticky;
+  z-index: 100;
   top: 0;
   background-color: white;
   height: var(--height-medium);
