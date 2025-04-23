@@ -9,6 +9,7 @@
   --color-gray-hover: #f5f5f5;
   --color-skeleton-1: #eee;
   --color-skeleton-2: #ddd;
+  --color-modal-backdrop: rgba(0, 0, 0, 0.5);
 
   --space-xs: 4px;
   --space-sm: 8px;
@@ -227,7 +228,7 @@
   }
 
   .delete-modal {
-    background-color: var(--color-white);
+    background-color: var(--color-modal-backdrop);
     display: none;
     height: 100%;
     left: 0;
