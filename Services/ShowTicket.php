@@ -202,7 +202,7 @@ class ShowTicket
      *
      * @param int $ticketId The id of the ticket.
      *
-     * @return array|boolean An array of subtasks, or false.
+     * @return array|false An array of subtasks, or false.
      */
     // phpcs:disable
     /** @phpstan-ignore-next-line*/

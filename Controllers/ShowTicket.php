@@ -69,6 +69,7 @@ class ShowTicket extends Controller
         $saveResult = $this->showTicketService->saveTicket($input['id'], $input['key'], $input['value']);
         return response()->json(['ticket' => $saveResult]);
     }
+
     /**
      * Saves ticket headline.
      * @param string[] $input The input for saving:
@@ -80,6 +81,23 @@ class ShowTicket extends Controller
     {
         $deleteResult = $this->showTicketService->deleteTicket($input['id']);
         return response()->json(['ticket' => $deleteResult]);
+    }
+
+    /**
+     * Saves ticket headline.
+     *
+     * @param string[] $input The input for getting tags:
+     *                     - 'id': The project id.
+     *
+     * @return JsonResponse The JSON response containing the list of tags or an empty array.
+     */
+    public function getTags(array $input): JsonResponse
+    {
+        $tags = [];
+        $ticketTags = $this->ticketRepository->getTags($input['projectId']);
+        $tags = $this->explodeAndMergeTags($ticketTags, $tags);
+        $uniqueTags = array_unique($tags);
+        return response()->json(['tags' => $uniqueTags]);
     }
 
     // phpcs:disable

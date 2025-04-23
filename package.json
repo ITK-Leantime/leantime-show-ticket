@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "dompurify": "^3.2.5",
-        "tinymce": "^7.8.0"
+        "tinymce": "^7.8.0",
+        "tom-select": "^2.4.3"
     }
 }
