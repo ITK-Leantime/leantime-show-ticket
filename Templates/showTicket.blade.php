@@ -1,6 +1,13 @@
 @extends($layout)
 @section('content')
     <div class="show-ticket">
+        <div class="delete-modal" id="delete-modal">
+            <div class="modal-content">
+                <p>{{ __('showTicket.confirm-delete-text') }}</p>
+                <button class="cancel-delete">{{ __('showTicket.confirm-delete-no') }}</button>
+                <button class="confirm-delete">{{ __('showTicket.confirm-delete-yes') }}</button>
+            </div>
+        </div>
         @if (!isset($ticketIdFromUrl))
             <form method="POST">
                 <main class="show-ticket-content">

@@ -212,14 +212,39 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 
+  // Delete modal
+  const confirmDeleteButton = document.querySelector(".confirm-delete");
+  const cancelDeleteButton = document.querySelector(".cancel-delete");
+  const deleteModal = window["delete-modal"];
+
+  window["delete-ticket"].addEventListener("click", () => {
+    deleteModal.style.display = "block";
+  });
+
+  document.addEventListener("click", function ({ target }) {
+    // To make click outside of the modal close the modal.
+    if (
+      deleteModal.style.display === "block" &&
+      !deleteModal.querySelector(".modal-content").contains(target) &&
+      target.id === "delete-modal"
+    ) {
+      deleteModal.style.display = "none";
+    }
+  });
+
+  cancelDeleteButton.addEventListener("click", () => {
+    deleteModal.style.display = "none";
+  });
+
+  confirmDeleteButton.addEventListener("click", () => {
+    deleteModal.style.display = "none";
+    deleteTicket();
+  });
+
   // Event listeners
   // Buttons in top bar
   window["copy-url-button"].addEventListener("click", function () {
     copyCurrentUrl();
-  });
-
-  window["delete-ticket"].addEventListener("click", function () {
-    deleteTicket();
   });
 
   // The following are much alike, and is change in the different inputs
