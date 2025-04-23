@@ -148,10 +148,6 @@ class ShowTicket extends Controller
             $ticket = $this->showTicketService->getTicket($_GET['ticketId']);
 
             if ($ticket) {
-                $tags = [];
-                $ticketTags = $this->ticketRepository->getTags($ticket->projectId);
-                $tags = $this->explodeAndMergeTags($ticketTags, $tags);
-                $uniqueTags = array_unique($tags);
                 $statusLabels = $this->showTicketService->getStatusLabels($ticket->projectId);
                 $priorityLabels = $this->showTicketService->getPriorityLabels();
                 $this->template->assign('ticket', $ticket);
@@ -160,7 +156,6 @@ class ShowTicket extends Controller
                 $this->tpl->assign('sprints', $this->sprintService->getAllSprints($ticket->projectId));
                 $this->tpl->assign('allUsers', $this->userService->getAll());
                 $this->tpl->assign('relatedTickets', $this->ticketService->getAllPossibleParents($ticket));
-                $this->tpl->assign('tags', $uniqueTags);
                 $milestones = $this->ticketService->getAllMilestones(['sprint' => '', 'type' => 'milestone', 'currentProject' => $ticket->projectId]);
                 $this->tpl->assign('milestones', $milestones);
                 $this->tpl->assign('files', $this->filesRepo->getFilesByModule('ticket', $ticket->id));
