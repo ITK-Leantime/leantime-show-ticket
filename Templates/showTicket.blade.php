@@ -4,8 +4,10 @@
         <div class="delete-modal" id="delete-modal">
             <div class="modal-content">
                 <p>{{ __('showTicket.confirm-delete-text') }}</p>
-                <button class="cancel-delete">{{ __('showTicket.confirm-delete-no') }}</button>
-                <button class="confirm-delete">{{ __('showTicket.confirm-delete-yes') }}</button>
+                <div class="modal-buttons">
+                    <button class="cancel-delete">{{ __('showTicket.confirm-delete-no') }}</button>
+                    <button class="confirm-delete">{{ __('showTicket.confirm-delete-yes') }}</button>
+                </div>
             </div>
         </div>
         @if (!isset($ticketIdFromUrl))
