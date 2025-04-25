@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* [PR-7](https://github.com/ITK-Leantime/leantime-show-ticket/pull/7)
+  Delete modal added
 * [PR-6](https://github.com/ITK-Leantime/leantime-show-ticket/pull/6)
   Tags in TomSelect
   Change leantime link to be an actual link doh
