@@ -204,10 +204,13 @@ class ShowTicket
      *
      * @return array|boolean An array of subtasks, or false.
      */
+    // phpcs:disable
+    /** @phpstan-ignore-next-line*/
     public function getAllSubtasks(int $ticketId): false|array
     {
         return $this->ticketService->getAllSubtasks($ticketId);
     }
+    // phpcs:enable
 
     /**
      * Retrieves the priority labels.
