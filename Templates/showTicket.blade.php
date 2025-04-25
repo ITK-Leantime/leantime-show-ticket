@@ -32,12 +32,12 @@
                     <i id="spinner" class="spinner fa-solid fa-spinner fa-spin-pulse"></i>
                 </div>
                 <div class="show-ticket-buttons">
-                    <button type="button" class="button" id="leantime-modal-button">
+                    <a class="button" href="<?= BASE_URL ?>#/tickets/showTicket/{{ $ticketIdFromUrl }}`">
                         <span class="sr-only">
                             {{ __('showTicket.open-task-leantime') }}
                         </span>
                         <i class="fa fa-l"></i>
-                    </button>
+                    </a>
                     <button type="button" class="button" id="copy-url-button">
                         <span class="sr-only">
                             {{ __('showTicket.copy-current-url') }}
@@ -51,7 +51,7 @@
                     </button>
                 </div>
             </div>
-            <main id="{{ $ticket->id }}" class="show-ticket-content">
+            <main id="{{ $ticket->id }}" project-id="{{ $ticket->projectId }}" class="show-ticket-content">
                 <h1>{{ $ticket->projectName }}: {{ $ticket->id }}</h1>
                 <label class="sr-only" for="headline-input">
                     {{ __('showTicket.headline-label') }}
@@ -125,6 +125,12 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="label-input-container" id="tags-container">
+                    <label for="tags-select">{{ __('showTicket.tags-label') }}</label>
+                    <select id="tags-select" class="input"></select>
+                    <div id="skeleton-input" class="skeleton-input">{{ __('showTicket.loading-tags') }}</div>
+                </div>
+                <input id="selected-tags" value="{{ $ticket->tags }}" type="hidden">
                 <div class="label-input-container">
                     <label for="milestone-select">{{ __('showTicket.milestone-label') }}</label>
                     <select defaultValue="{{ $ticket->milestoneid }}" class="select" id="milestone-select">
@@ -148,22 +154,7 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
-                <div class="label-input-container">
-                    <label for="tags-input">{{ __('showTicket.tags-label') }}</label>
-                    <input id="tags-input" type="text" value="{{ $ticket->tags }}" type="text" class="input">
-                </div>
-                <div class="label-input-container">
-                    <label for="tags-list" class="equal-space">{{ __('showTicket.existing-tags-label') }}</label>
-                    <p id="tags-list" class="equal-space">
-                        @foreach ($tags as $index => $tag)
-                            {{ $tag }}@if ($index < count($tags) - 2),
-                            @elseif($index == count($tags) - 2)
-                                {{ __('showTicket.tags-and-label') }}
-                            @else
-                            @endif
-                        @endforeach
-                    </p>
+
                 </div>
                 @if (count($files) > 0)
                     <div class="label-input-container">

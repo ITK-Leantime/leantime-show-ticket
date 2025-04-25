@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+* [PR-6](https://github.com/ITK-Leantime/leantime-show-ticket/pull/6)
+  Tags in TomSelect
+  Change leantime link to be an actual link doh
 * [PR-5](https://github.com/ITK-Leantime/leantime-show-ticket/pull/5)
   Add sub tasks to UI
 * [PR-4](https://github.com/ITK-Leantime/leantime-show-ticket/pull/4)

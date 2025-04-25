@@ -2,7 +2,6 @@ import "tinymce/tinymce";
 import "tinymce/icons/default";
 import "tinymce/themes/silver";
 import "tinymce/models/dom";
-
 import "tinymce/plugins/link";
 import "tinymce/plugins/table";
 import "tinymce/plugins/code";
@@ -12,6 +11,8 @@ import "tinymce/plugins/advlist";
 import "tinymce/plugins/lists";
 import "tinymce/plugins/code";
 import DOMPurify from "dompurify";
+import TomSelect from "tom-select";
+import "tom-select/dist/css/tom-select.css";
 
 async function copyCurrentUrl() {
   const url = document.location.href;
@@ -34,8 +35,8 @@ async function simpleSaveTicketWrapper(
   const id = inputId ?? document.querySelector("main").id;
   const defaultValue = defaultValueInput ?? input.defaultValue;
   const { value } = input;
-  const { original: ticket = {}, error } = await saveTicket(value, key, id);
 
+  const { original: ticket = {}, error } = await saveTicket(value, key, id);
   if (error) {
     input.value = defaultValue;
     input.defaultValue = defaultValue;
@@ -72,6 +73,28 @@ async function saveTicket(value, key, inputId) {
   }
 }
 
+function getTagsFromDom() {
+  return window["selected-tags"]?.value?.split(",") ?? [];
+}
+
+async function initateTags(select) {
+  const projectId = document.querySelector("main").getAttribute("project-id");
+  const response = await fetch("/ShowTicket/ShowTicket/getTags", {
+    method: "POST",
+    body: JSON.stringify({ projectId }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  const { tags } = await response.json();
+  const selectedTags = getTagsFromDom();
+  initateTomSelect(select, tags, selectedTags);
+}
+
 function deleteTicket() {
   startSpinner();
   const { id } = document.querySelector("main");
@@ -87,15 +110,12 @@ function deleteTicket() {
     .then(() => {
       location.reload();
     })
-    .catch((error) => {
-      console.error("Ticket was not deleted:", error);
-    })
+    .catch((error) => {})
     .finally(() => stopSpinner());
 }
 
 async function saveDateToFinish(input, defaultValue, id = null) {
   const { value } = input;
-
   const { original: ticket = {}, error } = await saveTicket(
     formatDate(value),
     "dateToFinish",
@@ -113,13 +133,54 @@ async function saveDateToFinish(input, defaultValue, id = null) {
   }
 }
 
+function mapDataForTomSelect(inputArray) {
+  return inputArray.map((data) => {
+    return { value: data, text: data };
+  });
+}
+
+function initateTomSelect(select, tags, selectedTags) {
+  let mappedTags = mapDataForTomSelect(Object.values(tags));
+  window["skeleton-input"].style.display = "none";
+  document.querySelector(".ts-wrapper").style.display = "";
+  select.addOptions(mappedTags);
+  select.setValue(selectedTags);
+}
+
+function arraysAreEqual(arr1, arr2) {
+  return JSON.stringify(arr1) === JSON.stringify(arr2);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   // Some default values, if there is a save error.
   const descriptionDefaultValue = tinymce?.activeEditor?.getContent();
   const statusDefaultValue = document.getElementById("status-select").value;
   const priorityDefaultValue = document.getElementById("priority-select").value;
   const userDefaultValue = document.getElementById("user-select").value;
+  const select = new TomSelect("#tags-select", {
+    options: [],
+    create: true,
+    persist: false,
+    maxItems: null,
+  });
+  document.querySelector(".ts-wrapper").style.display = "none";
+  initateTags(select);
+  select.on("change", async function (values) {
+    const defaultValue = getTagsFromDom();
+    if (!arraysAreEqual(defaultValue, values)) {
+      const { original: ticket = {}, error } = await saveTicket(
+        values.join(","),
+        "tags",
+      );
 
+      if (error) {
+        saveError(document.querySelector(".ts-control"));
+        select.setValue(defaultValue);
+      } else if (ticket) {
+        saveSuccess(document.querySelector(".ts-control"));
+      }
+    }
+  });
   // tinyMCE for rich text description edit
   tinymce.init({
     selector: "#description-input",
@@ -153,12 +214,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event listeners
   // Buttons in top bar
-  window["leantime-modal-button"].addEventListener("click", function () {
-    const { id } = document.querySelector("main");
-    const newUrl = `${window.location.origin}#/tickets/showTicket/${id}`;
-    window.location.assign(newUrl);
-  });
-
   window["copy-url-button"].addEventListener("click", function () {
     copyCurrentUrl();
   });
@@ -181,11 +236,6 @@ document.addEventListener("DOMContentLoaded", function () {
   window["milestone-select"].addEventListener("change", function () {
     const input = window["milestone-select"];
     simpleSaveTicketWrapper(input, "milestoneid");
-  });
-
-  window["tags-input"].addEventListener("change", function () {
-    const input = window["tags-input"];
-    simpleSaveTicketWrapper(input, "tags");
   });
 
   window["related-tickets-select"].addEventListener("change", function () {
@@ -281,7 +331,6 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     );
   });
-  console.log(subtaskDefaultValues);
 });
 
 // Spinner animation in top bar
