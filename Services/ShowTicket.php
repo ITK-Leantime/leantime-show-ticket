@@ -153,11 +153,11 @@ class ShowTicket
     /**
      * Transform to leantime dates, this is copy pasted from somewhere in leantime.
      *
-     * @param array<string, string> $values  the values to save. 
+     * @param array<string, string> $values the values to save.
      *
-     * @return array<mixed,mixed>|int|bool boolean indicating whether it succeeded or not. 
+     * @return array<mixed,mixed>|int|bool boolean indicating whether it succeeded or not.
      */
-    public function createTicket(array $values):  array|int|bool
+    public function createTicket(array $values): array|int|bool
     {
         $values = [
             'headline' => $values['headline'] ?? '',

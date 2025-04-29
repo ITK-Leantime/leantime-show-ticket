@@ -17,6 +17,7 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Auth\Models\Roles;
+
 /**
  * CreateTicket controller.
  */
@@ -59,7 +60,7 @@ class CreateTicket extends Controller
     public function createTicket(array $input): JsonResponse
     {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
-            return  response()->json(["error"=>true]);
+            return  response()->json(['error' => true]);
         }
         $returnValue = $this->showTicketService->createTicket($input['input']);
         return response()->json(['ticket' => $returnValue]);
@@ -76,7 +77,7 @@ class CreateTicket extends Controller
     public function getTags(array $input): JsonResponse
     {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
-            return  response()->json(["error"=>true]);
+            return  response()->json(['error' => true]);
         }
         $tags = $this->showTicketService->getTags((int)$input['projectId']);
         return response()->json(['tags' => $tags]);
@@ -109,15 +110,15 @@ class CreateTicket extends Controller
      * @throws BindingResolutionException
      */
     public function get(): Response
-    {   
+    {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
             return Frontcontroller::redirect(BASE_URL);
         }
 
         $this->template->assign('selectedProjectId', 0);
-        $this->template->assign('projectId', $_GET['projectId'] ?? "");
-        
-        if (array_key_exists('projectId', $_GET) && $_GET['projectId'] !== NULL) {
+        $this->template->assign('projectId', $_GET['projectId'] ?? '');
+
+        if (array_key_exists('projectId', $_GET) && $_GET['projectId'] !== null) {
             $statusLabels = $this->showTicketService->getStatusLabels($_GET['projectId']);
             $this->template->assign('statusLabels', $statusLabels);
             $priorityLabels = $this->showTicketService->getPriorityLabels();
@@ -128,10 +129,10 @@ class CreateTicket extends Controller
             $this->template->assign('milestones', $milestones);
         }
 
-        // For reasons unknown, I can get all projects (also the ones to assignet the session user) _but not_ 
-        // get specific projects if they are not assignet to the session user. Perhaps this is an error, but for 
+        // For reasons unknown, I can get all projects (also the ones to assignet the session user) _but not_
+        // get specific projects if they are not assignet to the session user. Perhaps this is an error, but for
         // now we are just fetching all the projects, and if the user has selected a project, I lock that choice by disabling
-        // the input. It would probably be better to not get all projects when the user already has selected a project, but oh well. 
+        // the input. It would probably be better to not get all projects when the user already has selected a project, but oh well.
         $this->template->assign('projects', $this->projectService->getAllProjects());
         // Ticket assigned to the template
         return $this->template->display('ShowTicket.createTicket');

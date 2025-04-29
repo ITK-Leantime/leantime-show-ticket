@@ -55,7 +55,7 @@ EventDispatcher::add_event_listener(
     'leantime.core.template.tpl.*.afterScriptLibTags',
     function () {
 
-    
+
         if (null !== (session('userdata.id')) && str_contains(strToLower($_SERVER['REQUEST_URI']), '/showticket/showticket')) {
             $cssUrl = '/dist/css/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<link rel="stylesheet" href="' . htmlspecialchars($cssUrl) . '"></link>';

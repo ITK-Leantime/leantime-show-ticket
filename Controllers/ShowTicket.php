@@ -15,6 +15,7 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Auth\Models\Roles;
+
 /**
  * ShowTicket controller.
  */
@@ -58,7 +59,7 @@ class ShowTicket extends Controller
     public function saveTicket(array $input): JsonResponse
     {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
-            return  response()->json(["error"=>true]);
+            return  response()->json(['error' => true]);
         }
         $saveResult = $this->showTicketService->saveTicket($input['id'], $input['key'], $input['value']);
         return response()->json(['ticket' => $saveResult]);
@@ -74,7 +75,7 @@ class ShowTicket extends Controller
     public function deleteTicket(array $input): JsonResponse
     {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
-            return  response()->json(["error"=>true]);
+            return  response()->json(['error' => true]);
         }
         $deleteResult = $this->showTicketService->deleteTicket($input['id']);
         return response()->json(['ticket' => $deleteResult]);
@@ -91,7 +92,7 @@ class ShowTicket extends Controller
     public function getTags(array $input): JsonResponse
     {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
-            return  response()->json(["error"=>true]);
+            return  response()->json(['error' => true]);
         }
         $tags = $this->showTicketService->getTags((int)$input['projectId']);
         return response()->json(['tags' => $tags]);
@@ -104,7 +105,7 @@ class ShowTicket extends Controller
     public function post(): Response
     {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
-            return  response()->json(["error"=>true]);
+            return  response()->json(['error' => true]);
         }
         $redirectUrl = BASE_URL . '/ShowTicket/ShowTicket';
         if (isset($_POST['ticket-id'])) {
@@ -123,13 +124,13 @@ class ShowTicket extends Controller
      * @throws BindingResolutionException
      */
     public function get(): Response
-    {   
+    {
         if (!AuthService::userIsAtLeast(Roles::$editor)) {
-            return  response()->json(["error"=>true]);
+            return  response()->json(['error' => true]);
         }
         $this->template->assign('ticketExists', false);
         $ticket = null;
-        if (array_key_exists('ticketId', $_GET) && $_GET['ticketId'] !== NULL) {
+        if (array_key_exists('ticketId', $_GET) && $_GET['ticketId'] !== null) {
             $ticket = $this->showTicketService->getTicket($_GET['ticketId']);
             $this->template->assign('ticketIdFromUrl', $_GET['ticketId']);
 
@@ -162,7 +163,7 @@ class ShowTicket extends Controller
                 $this->template->assign('ticket', $ticket);
             }
         }
-        
+
         return $this->template->display('ShowTicket.showTicket');
     }
 }
