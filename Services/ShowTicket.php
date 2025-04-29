@@ -153,10 +153,9 @@ class ShowTicket
     /**
      * Transform to leantime dates, this is copy pasted from somewhere in leantime.
      *
-     * @param string $id    the id.
-     * @param string $value   the ticket values to save.
+     * @param array<string, string> $values  the values to save. 
      *
-     * @return bool boolean indicating whether it succeeded or not. 
+     * @return array<mixed,mixed>|int|bool boolean indicating whether it succeeded or not. 
      */
     public function createTicket(array $values):  array|int|bool
     {
@@ -181,14 +180,7 @@ class ShowTicket
             'dateToFinish' => $values['dateToFinish'],
         ];
 
-        $result = $this->ticketService->addTicket($values);
-
-        if ($result) {
-            return $result;
-        } else {
-            return false;
-            
-        }
+        return $this->ticketService->addTicket($values);
     }
 
     /**
@@ -269,9 +261,9 @@ class ShowTicket
     /**
      * Get tags.
      *
-     * @param int projectId the id of the project the tags belong to
+     * @param int $projectId the id of the project the tags belong to
      *
-     * @return array The JSON response containing the list of tags or an empty array.
+     * @return array<string, string> The JSON response containing the list of tags or an empty array.
      */
     public function getTags(int $projectId): array
     {

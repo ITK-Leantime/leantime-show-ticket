@@ -37,8 +37,6 @@ class CreateTicket extends Controller
      * @param SprintService     $sprintService
      * @param UserService       $userService
      * @param Template          $template
-     * @param TicketRepository  $ticketRepository
-     * @param FileRepository    $filesRepo
      * @return void
      */
     public function init(ShowTicketService $showTicketService, ProjectService $projectService, TicketService $ticketService, SprintService $sprintService, UserService $userService, Template $template): void
