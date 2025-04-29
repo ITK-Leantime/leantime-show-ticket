@@ -13,8 +13,6 @@ use Illuminate\Http\JsonResponse as JsonResponse;
 use Leantime\Domain\Sprints\Services\Sprints as SprintService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Auth\Models\Roles;
 
@@ -34,6 +32,7 @@ class CreateTicket extends Controller
      * constructor
      *
      * @param ShowTicketService $showTicketService
+     * @param ProjectService    $projectService
      * @param TicketService     $ticketService
      * @param SprintService     $sprintService
      * @param UserService       $userService
