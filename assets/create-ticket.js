@@ -13,7 +13,7 @@ import "tinymce/plugins/code";
 import "tom-select/dist/css/tom-select.css";
 import DOMPurify from "dompurify";
 import TomSelect from "tom-select";
-import { formatDate, copyCurrentUrl,initateTags } from "./helpers";
+import { formatDate, copyCurrentUrl, initateTags } from "./helpers";
 
 function redirectToShowTicket(ticketId) {
   window.location.assign(`/ShowTicket/ShowTicket?ticketId=${ticketId}`);

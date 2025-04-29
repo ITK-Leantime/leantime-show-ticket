@@ -64,11 +64,11 @@ async function saveTicket(value, key, inputId) {
     const { ticket } = await response.json();
 
     stopSpinner();
-  
+
     return ticket;
   } catch (error) {
     stopSpinner();
-  
+
     return { error: true, errorText: error };
   }
 }
