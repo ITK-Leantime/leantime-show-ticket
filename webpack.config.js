@@ -7,6 +7,11 @@ module.exports = {
         path: path.resolve(__dirname, "dist"),
         filename: "show-ticket.js",
     },
+    entry: "./assets/create-ticket.js",
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "create-ticket.js",
+    },
     module: {
         rules: [
         {

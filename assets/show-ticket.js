@@ -10,21 +10,17 @@ import "tinymce/skins/content/default/content.css";
 import "tinymce/plugins/advlist";
 import "tinymce/plugins/lists";
 import "tinymce/plugins/code";
+import "tom-select/dist/css/tom-select.css";
 import DOMPurify from "dompurify";
 import TomSelect from "tom-select";
-import "tom-select/dist/css/tom-select.css";
-
-async function copyCurrentUrl() {
-  const url = document.location.href;
-  const button = window["copy-url-button"];
-
-  try {
-    await navigator.clipboard.writeText(url);
-    saveSuccess(button);
-  } catch (error) {
-    saveError(button);
-  }
-}
+import {
+  formatDateToDatetimeInput,
+  formatDate,
+  copyCurrentUrl,
+  saveSuccess,
+  saveError,
+  initateTags,
+} from "./helpers";
 
 async function simpleSaveTicketWrapper(
   input,
@@ -37,6 +33,7 @@ async function simpleSaveTicketWrapper(
   const { value } = input;
 
   const { original: ticket = {}, error } = await saveTicket(value, key, id);
+
   if (error) {
     input.value = defaultValue;
     input.defaultValue = defaultValue;
@@ -51,6 +48,7 @@ async function simpleSaveTicketWrapper(
 async function saveTicket(value, key, inputId) {
   startSpinner();
   const id = inputId ?? document.querySelector("main").id;
+
   try {
     const response = await fetch("/ShowTicket/ShowTicket/saveTicket", {
       method: "POST",
@@ -66,9 +64,11 @@ async function saveTicket(value, key, inputId) {
     const { ticket } = await response.json();
 
     stopSpinner();
+  
     return ticket;
   } catch (error) {
     stopSpinner();
+  
     return { error: true, errorText: error };
   }
 }
@@ -110,7 +110,7 @@ function deleteTicket() {
     .then(() => {
       location.reload();
     })
-    .catch((error) => {})
+    .catch(() => {})
     .finally(() => stopSpinner());
 }
 
@@ -133,20 +133,6 @@ async function saveDateToFinish(input, defaultValue, id = null) {
   }
 }
 
-function mapDataForTomSelect(inputArray) {
-  return inputArray.map((data) => {
-    return { value: data, text: data };
-  });
-}
-
-function initateTomSelect(select, tags, selectedTags) {
-  let mappedTags = mapDataForTomSelect(Object.values(tags));
-  window["skeleton-input"].style.display = "none";
-  document.querySelector(".ts-wrapper").style.display = "";
-  select.addOptions(mappedTags);
-  select.setValue(selectedTags);
-}
-
 function arraysAreEqual(arr1, arr2) {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
@@ -154,33 +140,41 @@ function arraysAreEqual(arr1, arr2) {
 document.addEventListener("DOMContentLoaded", function () {
   // Some default values, if there is a save error.
   const descriptionDefaultValue = tinymce?.activeEditor?.getContent();
-  const statusDefaultValue = document.getElementById("status-select").value;
-  const priorityDefaultValue = document.getElementById("priority-select").value;
-  const userDefaultValue = document.getElementById("user-select").value;
-  const select = new TomSelect("#tags-select", {
-    options: [],
-    create: true,
-    persist: false,
-    maxItems: null,
-  });
-  document.querySelector(".ts-wrapper").style.display = "none";
-  initateTags(select);
-  select.on("change", async function (values) {
-    const defaultValue = getTagsFromDom();
-    if (!arraysAreEqual(defaultValue, values)) {
-      const { original: ticket = {}, error } = await saveTicket(
-        values.join(","),
-        "tags",
-      );
+  const statusDefaultValue = document.getElementById("status-select")?.value;
+  const priorityDefaultValue =
+    document.getElementById("priority-select")?.value;
+  const userDefaultValue = document.getElementById("user-select")?.value;
+  let select = null;
+  const { id } = document.querySelector("main");
 
-      if (error) {
-        saveError(document.querySelector(".ts-control"));
-        select.setValue(defaultValue);
-      } else if (ticket) {
-        saveSuccess(document.querySelector(".ts-control"));
+  if (id) {
+    select = new TomSelect("#tags-select", {
+      options: [],
+      create: true,
+      persist: false,
+      maxItems: null,
+    });
+
+    document.querySelector(".ts-wrapper").style.display = "none";
+    initateTags(select);
+    select.on("change", async function (values) {
+      const defaultValue = getTagsFromDom();
+      if (!arraysAreEqual(defaultValue, values)) {
+        const { original: ticket = {}, error } = await saveTicket(
+          values.join(","),
+          "tags",
+        );
+
+        if (error) {
+          saveError(document.querySelector(".ts-control"));
+          select.setValue(defaultValue);
+        } else if (ticket) {
+          saveSuccess(document.querySelector(".ts-control"));
+        }
       }
-    }
-  });
+    });
+  }
+
   // tinyMCE for rich text description edit
   tinymce.init({
     selector: "#description-input",
@@ -217,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const cancelDeleteButton = document.querySelector(".cancel-delete");
   const deleteModal = window["delete-modal"];
 
-  window["delete-ticket"].addEventListener("click", () => {
+  window["delete-ticket"]?.addEventListener("click", () => {
     deleteModal.style.display = "block";
   });
 
@@ -232,63 +226,64 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  cancelDeleteButton.addEventListener("click", () => {
+  cancelDeleteButton?.addEventListener("click", () => {
     deleteModal.style.display = "none";
   });
 
-  confirmDeleteButton.addEventListener("click", () => {
+  confirmDeleteButton?.addEventListener("click", () => {
     deleteModal.style.display = "none";
     deleteTicket();
   });
 
   // Event listeners
   // Buttons in top bar
-  window["copy-url-button"].addEventListener("click", function () {
+  window["copy-url-button"]?.addEventListener("click", function () {
     copyCurrentUrl();
   });
 
   // The following are much alike, and is change in the different inputs
-  window["headline-input"].addEventListener("change", function () {
+  window["headline-input"]?.addEventListener("change", function () {
     const input = window["headline-input"];
     simpleSaveTicketWrapper(input, "headline");
   });
 
-  window["sprint-select"].addEventListener("change", function () {
+  window["sprint-select"]?.addEventListener("change", function () {
     const input = window["sprint-select"];
     simpleSaveTicketWrapper(input, "sprint");
   });
 
-  window["milestone-select"].addEventListener("change", function () {
+  window["milestone-select"]?.addEventListener("change", function () {
     const input = window["milestone-select"];
     simpleSaveTicketWrapper(input, "milestoneid");
   });
 
-  window["related-tickets-select"].addEventListener("change", function () {
+  window["related-tickets-select"]?.addEventListener("change", function () {
     const input = window["related-tickets-select"];
     simpleSaveTicketWrapper(input, "dependingTicketId");
   });
 
-  window["status-select"].addEventListener("change", function () {
+  window["status-select"]?.addEventListener("change", function () {
     const input = window["status-select"];
     simpleSaveTicketWrapper(input, "status", statusDefaultValue);
   });
 
-  window["priority-select"].addEventListener("change", function () {
+  window["priority-select"]?.addEventListener("change", function () {
     const input = window["priority-select"];
     simpleSaveTicketWrapper(input, "priority", priorityDefaultValue);
   });
 
-  window["date-to-finish-input"].addEventListener("change", function () {
+  window["date-to-finish-input"]?.addEventListener("change", function () {
     const input = window["date-to-finish-input"];
+
     saveDateToFinish(input, input.defaultValue);
   });
 
-  window["plan-hours-input"].addEventListener("change", function () {
+  window["plan-hours-input"]?.addEventListener("change", function () {
     const input = window["plan-hours-input"];
     simpleSaveTicketWrapper(input, "planHours");
   });
 
-  window["user-select"].addEventListener("change", function () {
+  window["user-select"]?.addEventListener("change", function () {
     const input = window["user-select"];
     simpleSaveTicketWrapper(input, "editorId", userDefaultValue);
   });
@@ -365,46 +360,4 @@ function startSpinner() {
 
 function stopSpinner() {
   window["spinner"].style.display = "none";
-}
-
-// Save animations from project overview
-function saveSuccess(elem) {
-  elem.classList.add("save-success");
-
-  setTimeout(() => {
-    elem.classList.remove("save-success");
-  }, 1000);
-}
-
-function saveError(elem) {
-  elem.classList.add("save-error");
-
-  setTimeout(() => {
-    elem.classList.remove("save-error");
-  }, 1000);
-}
-
-// Stupid leantime dates confusing me, maybe these formatting functions are correct, I sure hope so.
-function formatDate(date) {
-  const localDate = new Date(date);
-  const yyyy = localDate.getFullYear();
-  let mm = localDate.getMonth() + 1; // Months start at 0!
-  let dd = localDate.getDate();
-
-  dd = dd < 10 ? `0${dd}` : dd;
-  mm = mm < 10 ? `0${mm}` : mm;
-
-  return dd + "/" + mm + "/" + yyyy;
-}
-
-function formatDateToDatetimeInput(date) {
-  const localDate = new Date(date);
-  const yyyy = localDate.getFullYear();
-  let mm = localDate.getMonth() + 1; // Months start at 0!
-  let dd = localDate.getDate();
-
-  dd = dd < 10 ? `0${dd}` : dd;
-  mm = mm < 10 ? `0${mm}` : mm;
-
-  return yyyy + "-" + mm + "-" + dd;
 }

@@ -55,10 +55,17 @@ EventDispatcher::add_event_listener(
     'leantime.core.template.tpl.*.afterScriptLibTags',
     function () {
 
-        if (null !== (session('userdata.id')) && str_contains($_SERVER['REQUEST_URI'], '/ShowTicket/ShowTicket')) {
+    
+        if (null !== (session('userdata.id')) && str_contains(strToLower($_SERVER['REQUEST_URI']), '/showticket/showticket')) {
             $cssUrl = '/dist/css/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<link rel="stylesheet" href="' . htmlspecialchars($cssUrl) . '"></link>';
             $jsUrl = '/dist/js/show-ticket.js?' . http_build_query(['v' => '%%VERSION%%']);
+            echo '<script src="' . htmlspecialchars($jsUrl) . '"></script>';
+        }
+        if (null !== (session('userdata.id')) && str_contains(strToLower($_SERVER['REQUEST_URI']), '/showticket/createticket')) {
+            $cssUrl = '/dist/css/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
+            echo '<link rel="stylesheet" href="' . htmlspecialchars($cssUrl) . '"></link>';
+            $jsUrl = '/dist/js/create-ticket.js?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<script src="' . htmlspecialchars($jsUrl) . '"></script>';
         }
     },

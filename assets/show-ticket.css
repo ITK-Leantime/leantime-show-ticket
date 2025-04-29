@@ -36,18 +36,73 @@
   --z-modal: 999;
 }
 
-.rightpanel.personal {
+.ticket .save-success {
+  animation: successAnimation 1s forwards;
+}
+
+.ticket .save-error {
+  animation: errorAnimation 1s forwards;
+}
+
+@keyframes successAnimation {
+  0% {
+    background-color: var(--color-success);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes errorAnimation {
+  0% {
+    background-color: var(--color-error);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes skeletonPulseAnimation {
+  0% {
+    background-color: var(--color-skeleton-1);
+  }
+  50% {
+    background-color: var(--color-skeleton-2);
+  }
+  100% {
+    background-color: var(--color-skeleton-1);
+  }
+}
+
+/* :( */
+body {
   overflow: hidden;
   height: 100vh;
 }
 
-.show-ticket {
+.maincontent {
+  margin-top: 0;
+}
+
+.leftpanel {
+  z-index: 5; /* This might break stuff */
+}
+
+.maincontentinner {
+  background-color: white;
+  border: none;
+  border-radius: 2px;
+  padding: 0px;
+}
+
+.ticket {
   background-color: var(--color-white);
-  height: 100vh;
   overflow-y: scroll;
   padding-bottom: 100px;
   position: relative;
   z-index: var(--z-content);
+  overflow: scroll;
+  height: 100vh;
 
   .find-ticket-container {
     display: flex;
@@ -71,7 +126,7 @@
     }
   }
 
-  .show-ticket-notification {
+  .ticket-notification {
     align-items: center;
     background-color: var(--color-notification-background);
     border: 1px solid var(--color-notification-border);
@@ -86,7 +141,7 @@
     }
   }
 
-  .show-ticket-header {
+  .ticket-header {
     align-items: center;
     background-color: var(--color-white);
     border-bottom: 1px solid var(--color-border);
@@ -100,7 +155,6 @@
     z-index: var(--z-header);
 
     .button {
-      all: unset;
       align-items: center;
       background-color: var(--color-white);
       border: 1px solid var(--color-border);
@@ -109,6 +163,12 @@
       height: var(--button-size);
       justify-content: center;
       width: var(--button-size);
+
+      &:disabled {
+        background-color: #e2e8f0;
+        cursor: not-allowed;
+        color: red;
+      }
 
       &:hover {
         background-color: var(--color-gray-hover);
@@ -133,7 +193,7 @@
     }
   }
 
-  .show-ticket-content {
+  .ticket-content {
     display: flex;
     flex-direction: column;
     padding: var(--space-lg);
@@ -212,7 +272,7 @@
 
   .skeleton-input {
     align-items: center;
-    animation: skeleton-pulse 1.5s infinite ease-in-out;
+    animation: skeletonPulseAnimation 1.5s infinite ease-in-out;
     background-color: var(--color-skeleton-1);
     border-radius: var(--radius-md);
     color: var(--color-dark-text);
@@ -222,7 +282,7 @@
     width: var(--width-half);
   }
 
-  .show-ticket-buttons {
+  .ticket-buttons {
     display: flex;
     gap: var(--space-md);
   }
@@ -287,50 +347,5 @@
 
   .tox-promotion {
     display: none;
-  }
-
-  .save-success,
-  .save-error {
-    animation-duration: 1s;
-    animation-fill-mode: forwards;
-  }
-
-  .save-success {
-    animation-name: successAnim;
-  }
-
-  .save-error {
-    animation-name: errorAnim;
-  }
-}
-
-/* Animations (global) */
-@keyframes successAnim {
-  0% {
-    background-color: var(--color-success);
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-@keyframes errorAnim {
-  0% {
-    background-color: var(--color-error);
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-@keyframes skeleton-pulse {
-  0% {
-    background-color: var(--color-skeleton-1);
-  }
-  50% {
-    background-color: var(--color-skeleton-2);
-  }
-  100% {
-    background-color: var(--color-skeleton-1);
   }
 }

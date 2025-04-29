@@ -7,7 +7,7 @@ use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse as JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 
 /**
  * Show ticket services file.
@@ -15,15 +15,18 @@ use Symfony\Component\HttpFoundation\Response;
 class ShowTicket
 {
     private TicketService $ticketService;
+    private TicketRepository $ticketRepository;
     /**
      * constructor
      *
      * @param  TicketService $ticketService
+     *      * @param TicketRepository  $ticketRepository
      * @return void
      */
-    public function __construct(TicketService $ticketService)
+    public function __construct(TicketService $ticketService, TicketRepository $ticketRepository)
     {
         $this->ticketService = $ticketService;
+        $this->ticketRepository = $ticketRepository;
     }
 
     /**
@@ -33,6 +36,7 @@ class ShowTicket
         // source => target
         __DIR__ . '/../dist/show-ticket.css' => APP_ROOT . '/public/dist/css/show-ticket.css',
         __DIR__ . '/../dist/show-ticket.js' => APP_ROOT . '/public/dist/js/show-ticket.js',
+        __DIR__ . '/../dist/create-ticket.js' => APP_ROOT . '/public/dist/js/create-ticket.js',
     ];
 
     /**
@@ -107,7 +111,6 @@ class ShowTicket
     public function saveTicket(string $id, string $key, string $value): JSonResponse
     {
         $ticket = $this->ticketService->getTicket($id);
-
         $values = [
             'id' => $ticket->id,
             'headline' => $ticket->headline ?? '',
@@ -144,6 +147,47 @@ class ShowTicket
         } else {
             return response()->json(false);
             ;
+        }
+    }
+
+    /**
+     * Transform to leantime dates, this is copy pasted from somewhere in leantime.
+     *
+     * @param string $id    the id.
+     * @param string $value   the ticket values to save.
+     *
+     * @return bool boolean indicating whether it succeeded or not. 
+     */
+    public function createTicket(array $values):  array|int|bool
+    {
+        $values = [
+            'headline' => $values['headline'] ?? '',
+            'type' => 'task',
+            'description' => $values['description'] ?? '',
+            'projectId' => $values['projectId'],
+            'editorId' => $values['editorId'] ?? '',
+            // @phpstan-ignore-next-line
+            'date' => dtHelper()->userNow()->formatDateTimeForDb(),
+            'status' => $values['status'] ?? '',
+            'planHours' => $values['planHours'] ?? '',
+            'tags' => $values['tags'] ?? '',
+            'sprint' => $values['sprint'] ?? '',
+            'storypoints' => $values['storypoints'] ?? '',
+            'hourRemaining' => $values['hourRemaining'] ?? '',
+            'priority' => $values['priority'] ?? '',
+            'acceptanceCriteria' => $values['acceptanceCriteria'] ?? '',
+            'dependingTicketId' => $values['dependingTicketId'] ?? '',
+            'milestoneid' => $values['milestoneid'] ?? '',
+            'dateToFinish' => $values['dateToFinish'],
+        ];
+
+        $result = $this->ticketService->addTicket($values);
+
+        if ($result) {
+            return $result;
+        } else {
+            return false;
+            
         }
     }
 
@@ -221,4 +265,35 @@ class ShowTicket
     {
         return $this->ticketService->getPriorityLabels();
     }
+
+    /**
+     * Get tags.
+     *
+     * @param int projectId the id of the project the tags belong to
+     *
+     * @return array The JSON response containing the list of tags or an empty array.
+     */
+    public function getTags(int $projectId): array
+    {
+        $tags = [];
+        $ticketTags = $this->ticketRepository->getTags($projectId);
+        $tags = $this->explodeAndMergeTags($ticketTags, $tags);
+        $uniqueTags = array_unique($tags);
+        return $uniqueTags;
+    }
+
+    // phpcs:disable
+    /** @phpstan-ignore-next-line */
+    private function explodeAndMergeTags(array $dbTagValues, array $mergeInto): array
+    {
+        foreach ($dbTagValues as $tagGroup) {
+            if (isset($tagGroup['tags']) && $tagGroup['tags'] != null) {
+                $tagArray = explode(',', $tagGroup['tags']);
+                $mergeInto = array_merge($tagArray, $mergeInto);
+            }
+        }
+
+        return $mergeInto;
+    }
+    // phpcs:enable
 }
