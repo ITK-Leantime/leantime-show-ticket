@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* [PR-8](https://github.com/ITK-Leantime/leantime-show-ticket/pull/8)
+  Create ticket added
 * [PR-7](https://github.com/ITK-Leantime/leantime-show-ticket/pull/7)
   Delete modal added
 * [PR-6](https://github.com/ITK-Leantime/leantime-show-ticket/pull/6)
