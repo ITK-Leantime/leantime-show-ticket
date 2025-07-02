@@ -5,6 +5,8 @@ export plugin_name=ShowTicket
 export plugin_repo_url=https://github.com/ITK-Leantime/leantime-show-ticket/
 
 buildRelease() {
+  npm install
+  npm run build
   return
 }
 
