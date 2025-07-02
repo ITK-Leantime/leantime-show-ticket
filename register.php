@@ -57,15 +57,15 @@ EventDispatcher::add_event_listener(
 
 
         if (null !== (session('userdata.id')) && str_contains(strToLower($_SERVER['REQUEST_URI']), '/showticket/showticket')) {
-            $cssUrl = '/dist/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
+            $cssUrl = '/dist/css/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<link rel="stylesheet" href="' . htmlspecialchars($cssUrl) . '"></link>';
-            $jsUrl = '/dist/show-ticket.js?' . http_build_query(['v' => '%%VERSION%%']);
+            $jsUrl = '/dist/js/show-ticket.js?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<script src="' . htmlspecialchars($jsUrl) . '"></script>';
         }
         if (null !== (session('userdata.id')) && str_contains(strToLower($_SERVER['REQUEST_URI']), '/showticket/createticket')) {
-            $cssUrl = '/dist/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
+            $cssUrl = '/dist/css/show-ticket.css?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<link rel="stylesheet" href="' . htmlspecialchars($cssUrl) . '"></link>';
-            $jsUrl = '/dist/create-ticket.js?' . http_build_query(['v' => '%%VERSION%%']);
+            $jsUrl = '/dist/js/create-ticket.js?' . http_build_query(['v' => '%%VERSION%%']);
             echo '<script src="' . htmlspecialchars($jsUrl) . '"></script>';
         }
     },
