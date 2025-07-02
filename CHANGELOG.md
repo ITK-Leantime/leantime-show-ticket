@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+* [PR-9](https://github.com/ITK-Leantime/leantime-show-ticket/pull/9)
+  Fix release scripts
+  Change paths in register
+  Add missing stuff to package.json
 * [PR-8](https://github.com/ITK-Leantime/leantime-show-ticket/pull/8)
   Create ticket added
 * [PR-7](https://github.com/ITK-Leantime/leantime-show-ticket/pull/7)
