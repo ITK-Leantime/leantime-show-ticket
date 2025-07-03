@@ -292,6 +292,26 @@
                                         class="fa-regular fa-clock"></i>{{ __('showTicket.tabs-header-work-logs') }}
                                 </button>
                             </div>
+
+                            <div id="worklog-content" role="tabpanel" aria-labelledby="tab-worklogs" class="activity-container tab-content">
+                                    <h2 class="h2 sr-only">{{ __('showTicket.tabs-header-work-logs') }}</h2>
+                                    <div class="timeline">
+                                        @foreach ($worklogs as $worklog)
+                                            <div class="worklog">
+                                                <div class="worklog-icon"><i class="fa-solid fa-clock"></i></div>
+                                                <div>
+                                                    {!! sprintf(__('showTicket.user-logged'), $worklog['display_name'], $worklog['loggedHours']) !!}
+                                                </div>
+                                                <span>
+                                               {{ $worklog['description']}}
+                                                </span>
+                                                <div class="date">{{ $worklog['display_date'] }}</div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+
                             <div id="comments-content" role="tabpanel" aria-labelledby="tab-comments"
                                 class="activity-container tab-content active">
                                 <h2 class="h2 sr-only">{{ __('showTicket.tabs-header-comments') }}</h2>
@@ -353,23 +373,11 @@
                                     @endforeach
                                 </div>
                             </div>
+                            
             </div>
         </div>
     </div>
-    <div id="worklog-content" role="tabpanel" aria-labelledby="tab-worklogs" class="activity-container tab-content">
-        <h2 class="h2 sr-only">{{ __('showTicket.tabs-header-work-logs') }}</h2>
-        <div class="timeline">
-            @foreach ($worklogs as $worklog)
-                <div class="worklog">
-                    <div class="worklog-icon"><i class="fa-solid fa-clock"></i></div>
-                    <div>
-                        {!! sprintf(__('showTicket.user-logged'), $worklog['display_name'], $worklog['loggedHours']) !!}
-                    </div>
-                    <div class="date">{{ $worklog['display_date'] }}</div>
-                </div>
-            @endforeach
-        </div>
-    </div>
+   
     </section>
 
     </main>

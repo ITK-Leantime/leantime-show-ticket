@@ -22,6 +22,7 @@ class ShowTicket extends Repository
         $query = "SELECT
         userid,
                 zp_timesheets.workdate,
+                zp_timesheets.description,
                 DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
                 hours as loggedHours
             FROM

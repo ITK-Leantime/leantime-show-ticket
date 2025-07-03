@@ -42,5 +42,5 @@ module.exports = {
             tinymce: path.resolve(__dirname, "node_modules", "tinymce"),
         },
     },
-    mode: "development",
+    mode: "production",
 };

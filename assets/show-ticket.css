@@ -245,7 +245,7 @@ body {
     }
 
     .tabs-container {
-      max-width: 33%;
+      width: 33%;
     }
 
     @media (max-width: 768px) {
@@ -286,6 +286,10 @@ body {
             all: unset;
             cursor: pointer;
             margin: 2px;
+          }
+
+          span {
+            font-weight: lighter;
           }
 
           .indented {
