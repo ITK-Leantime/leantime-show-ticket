@@ -180,7 +180,7 @@ class ShowTicket
             'acceptanceCriteria' => $values['acceptanceCriteria'] ?? '',
             'dependingTicketId' => $values['dependingTicketId'] ?? '',
             'milestoneid' => $values['milestoneid'] ?? '',
-            'dateToFinish' => $values['dateToFinish']
+            'dateToFinish' => $values['dateToFinish'],
         ];
 
         return $this->ticketService->addTicket($values);
