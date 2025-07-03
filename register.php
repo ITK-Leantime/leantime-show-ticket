@@ -22,6 +22,15 @@ function addShowTicketItemToMenu(array $menuStructure): array
         'active' => ['ShowTicket'],
         'module' => 'ShowTicket', // First part of the path when visiting your plugin e.g. leantime.dk/{this part}/ShowTicket
     ];
+    $menuStructure['personal'][18] = [
+        'type' => 'item',
+        'title' => '<span class="fas fa-fw fa-plus"></span> Create ticket',
+        'icon' => 'fa fa-fw fa-plus',
+        'tooltip' => 'Create ticket',
+        'href' => '/ShowTicket/CreateTicket',
+        'active' => ['CreateTicket'],
+        'module' => 'ShowTicket', // First part of the path when visiting your plugin e.g. leantime.dk/{this part}/ShowTicket
+    ];
 
     return $menuStructure;
 }

@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+* [PR-11](https://github.com/ITK-Leantime/leantime-show-ticket/pull/11)
+  Add create task to menu
+  Add sub tasks in the ui
 * [PR-10](https://github.com/ITK-Leantime/leantime-show-ticket/pull/10)
   Add worklogs and comments to ui
 * [PR-9](https://github.com/ITK-Leantime/leantime-show-ticket/pull/9)
