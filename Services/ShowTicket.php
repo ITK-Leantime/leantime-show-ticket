@@ -8,6 +8,7 @@ use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse as JsonResponse;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Comments\Services\Comments as CommentService;
 
 /**
  * Show ticket services file.
@@ -16,6 +17,7 @@ class ShowTicket
 {
     private TicketService $ticketService;
     private TicketRepository $ticketRepository;
+    private CommentService $commentService;
     /**
      * constructor
      *
@@ -23,10 +25,11 @@ class ShowTicket
      *      * @param TicketRepository  $ticketRepository
      * @return void
      */
-    public function __construct(TicketService $ticketService, TicketRepository $ticketRepository)
+    public function __construct(TicketService $ticketService, TicketRepository $ticketRepository, CommentService $commentService)
     {
         $this->ticketService = $ticketService;
         $this->ticketRepository = $ticketRepository;
+        $this->commentService = $commentService;
     }
 
     /**
@@ -194,6 +197,50 @@ class ShowTicket
     {
         $result = $this->ticketService->delete($id);
         return response()->json($result);
+    }
+
+    /**
+     * Delete comment.
+     *
+     * @param string $id the id of the comment to delete.
+     *
+     * @return JsonResponse true or false
+     */
+    public function deleteComment(string $id)
+    {
+        if ($this->commentService->deleteComment((int)$id)) {
+            return response()->json(['result' => true]);
+        }
+        return response()->json(['result' => false]);
+    }
+    /**
+     * Edit comment.
+     *
+     * @param mixed $input array with edited text and id.
+     *
+     * @return JsonResponse true or false
+     */
+    public function editComment(mixed $input)
+    {
+        if ($this->commentService->editComment($input, $input['id'])) {
+            return response()->json(['result' => true]);
+        }
+        return response()->json(['result' => false]);
+    }
+    /**
+     * Reply to comment.
+     *
+     * @param mixed $input array with text, "father", which is the parent task, and id.
+     *
+     * @return JsonResponse true or false
+     */
+    public function replyToComment(mixed $input)
+    {
+        $ticket = $this->ticketService->getTicket($input['father']);
+        if ($this->commentService->addComment($input, 'ticket', $input['father'], $ticket)) {
+            return response()->json(['result' => true]);
+        }
+        return response()->json(['result' => false]);
     }
 
     /**

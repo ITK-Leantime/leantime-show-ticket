@@ -3,15 +3,6 @@
     <div class="maincontent">
         <div class="maincontentinner">
             <div class="ticket">
-                <div class="delete-modal" id="delete-modal">
-                    <div class="modal-content">
-                        <p>{{ __('showTicket.confirm-delete-text') }}</p>
-                        <div class="modal-buttons">
-                            <button class="cancel-delete">{{ __('showTicket.confirm-delete-no') }}</button>
-                            <button class="confirm-delete">{{ __('showTicket.confirm-delete-yes') }}</button>
-                        </div>
-                    </div>
-                </div>
                 <div class="ticket-header">
                     <div>
                         <div id="notification" class="ticket-notification">
@@ -34,7 +25,7 @@
                         </button>
                     </div>
                 </div>
-                <main project-id="{{ $projectId }}" class="ticket-content">
+                <main project-id="{{ $projectId }}" class="ticket-content ticket-content-create">
                     <h1>{{ __('showTicket.create-new-ticket') }}</h1>
                     <form method="POST">
                         <div class="label-input-container">
@@ -53,7 +44,7 @@
                         </div>
                     </form>
                     @if ($projectId !== '')
-                        <input type="text" class="input" id="headline-input" />
+                        <input type="text" class="input full-width" id="headline-input" />
                         <label class="sr-only" for="description-input">
                             {{ __('showTicket.description-label') }}
                         </label>
@@ -135,6 +126,5 @@
             </div>
             </main>
         </div>
-    </div>
     </div>
 @endsection

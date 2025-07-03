@@ -77,24 +77,6 @@ function getTagsFromDom() {
   return window["selected-tags"]?.value?.split(",") ?? [];
 }
 
-async function initateTags(select) {
-  const projectId = document.querySelector("main").getAttribute("project-id");
-  const response = await fetch("/ShowTicket/ShowTicket/getTags", {
-    method: "POST",
-    body: JSON.stringify({ projectId }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-  const { tags } = await response.json();
-  const selectedTags = getTagsFromDom();
-  initateTomSelect(select, tags, selectedTags);
-}
-
 function deleteTicket() {
   startSpinner();
   const { id } = document.querySelector("main");
@@ -112,6 +94,62 @@ function deleteTicket() {
     })
     .catch(() => {})
     .finally(() => stopSpinner());
+}
+
+function deleteComment(id, input) {
+  startSpinner();
+  fetch("/ShowTicket/ShowTicket/deleteComment", {
+    method: "POST",
+    body: JSON.stringify({ id }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      response.json();
+    })
+    .then(() => {
+      saveSuccess(input);
+      setTimeout(() => {
+        window[`comment-${id}`].remove();
+      }, 1000);
+    })
+    .catch(() => {
+      saveError(input);
+    })
+    .finally(() => stopSpinner());
+}
+
+function updateCommentText(id, text) {
+  fetch("/ShowTicket/ShowTicket/editComment", {
+    method: "POST",
+    body: JSON.stringify({ id, text }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      response.json();
+    })
+    .then(() => {
+      window[`comment-text-${id}`].innerHTML = text;
+    });
+}
+
+function replyToComment(id, text) {
+  fetch("/ShowTicket/ShowTicket/replyToComment", {
+    method: "POST",
+    body: JSON.stringify({ father: id, text: text }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      response.json();
+    })
+    .then(() => {
+      location.reload();
+    });
 }
 
 async function saveDateToFinish(input, defaultValue, id = null) {
@@ -235,6 +273,66 @@ document.addEventListener("DOMContentLoaded", function () {
     deleteTicket();
   });
 
+  // Edit comment modal
+  const confirmEditButton = document.querySelector(".confirm-edit");
+  const cancelEditButton = document.querySelector(".cancel-edit");
+  const editComment = window["edit-comment-modal"];
+
+  document.addEventListener("click", function ({ target }) {
+    // To make click outside of the modal close the modal.
+    if (
+      editComment.style.display === "block" &&
+      !editComment.querySelector(".modal-content").contains(target) &&
+      target.id === "edit-comment-modal"
+    ) {
+      editComment.style.display = "none";
+    }
+  });
+
+  cancelEditButton?.addEventListener("click", () => {
+    editComment.style.display = "none";
+  });
+
+  confirmEditButton?.addEventListener("click", () => {
+    editComment.style.display = "none";
+
+    const content = tinymce.get("comment-input").getContent();
+    const sanitizedContent = DOMPurify.sanitize(content);
+
+    updateCommentText(editComment.getAttribute("data-id"), sanitizedContent);
+  });
+
+  // reply comment modal
+  const confirmReplyButton = document.querySelector(".confirm-reply");
+  const cancelReplyButton = document.querySelector(".cancel-reply");
+  const replyComment = window["reply-comment-modal"];
+
+  document.addEventListener("click", function ({ target }) {
+    // To make click outside of the modal close the modal.
+    if (
+      replyComment.style.display === "block" &&
+      !replyComment.querySelector(".modal-content").contains(target) &&
+      target.id === "reply-comment-modal"
+    ) {
+      tinymce.get("reply-input").setContent("");
+      replyComment.style.display = "none";
+    }
+  });
+
+  cancelReplyButton?.addEventListener("click", () => {
+    replyComment.style.display = "none";
+    tinymce.get("reply-input").setContent("");
+  });
+
+  confirmReplyButton?.addEventListener("click", () => {
+    replyComment.style.display = "none";
+
+    const content = tinymce.get("reply-input").getContent();
+    tinymce.get("reply-input").setContent("");
+    const sanitizedContent = DOMPurify.sanitize(content);
+    replyToComment(replyComment.getAttribute("data-id"), sanitizedContent);
+  });
+
   // Event listeners
   // Buttons in top bar
   window["copy-url-button"]?.addEventListener("click", function () {
@@ -274,7 +372,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window["date-to-finish-input"]?.addEventListener("change", function () {
     const input = window["date-to-finish-input"];
-
     saveDateToFinish(input, input.defaultValue);
   });
 
@@ -288,7 +385,74 @@ document.addEventListener("DOMContentLoaded", function () {
     simpleSaveTicketWrapper(input, "editorId", userDefaultValue);
   });
 
-  // Get all elements with ids that start with subtask and is followed by *some* numbers.
+  // Tabs
+  window["tab-comments"]?.addEventListener("click", function () {
+    window["tab-comments"].ariaSelected = "true";
+    window["comments-content"].classList.add("active");
+    window["tab-logs"].ariaSelected = "false";
+    window["worklog-content"].classList.remove("active");
+  });
+
+  window["tab-logs"]?.addEventListener("click", function () {
+    window["tab-logs"].ariaSelected = "true";
+    window["worklog-content"].classList.add("active");
+    window["comments-content"].classList.remove("active");
+    window["tab-comments"].ariaSelected = "false";
+  });
+
+  // Get all elements with ids that start with delete-comment- and is followed by *some* numbers (which is an id).
+  const commentIds = Array.from(
+    document.querySelectorAll('[id^="delete-comment-"]'),
+  )
+    .filter(({ id }) => /^delete-comment-\d+$/.test(id))
+    .map(({ id }) => id);
+
+  commentIds.forEach((subtaskId) => {
+    const id = subtaskId.replace("delete-comment-", "");
+
+    window[`delete-comment-${id}`].addEventListener("click", function () {
+      deleteComment(id, window[`comment-${id}`]);
+    });
+    window[`reply-to-comment-${id}`]?.addEventListener("click", function () {
+      replyComment.style.display = "block";
+      replyComment.setAttribute("data-id", id);
+      // tinyMCE for rich text description edit
+      tinymce.init({
+        selector: "#reply-input",
+        plugins: "link table code",
+        toolbar:
+          "undo redo | formatselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | code",
+        height: 300,
+        branding: false,
+        skin: false,
+        content_css: false,
+        license_key: "gpl",
+      });
+    });
+    window[`edit-comment-${id}`].addEventListener("click", function () {
+      editComment.style.display = "block";
+      editComment.setAttribute("data-id", id);
+      // tinyMCE for rich text description edit
+      tinymce.init({
+        selector: "#comment-input",
+        plugins: "link table code",
+        toolbar:
+          "undo redo | formatselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | code",
+        height: 300,
+        branding: false,
+        skin: false,
+        content_css: false,
+        license_key: "gpl",
+      });
+      setTimeout(() => {
+        tinymce
+          .get("comment-input")
+          .setContent(window[`comment-text-${id}`].innerHTML);
+      }, 0);
+    });
+  });
+
+  // Get all elements with ids that start with subtask and is followed by *some* numbers (which is an id).
   const subtasksIds = Array.from(document.querySelectorAll('[id^="subtask-"]'))
     .filter(({ id }) => /^subtask-\d+$/.test(id))
     .map(({ id }) => id);

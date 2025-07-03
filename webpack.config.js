@@ -2,15 +2,13 @@ const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-    entry: "./assets/show-ticket.js",
-    output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: "show-ticket.js",
+    entry: {
+        'show-ticket': "./assets/show-ticket.js",
+        'create-ticket': "./assets/create-ticket.js",
     },
-    entry: "./assets/create-ticket.js",
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "create-ticket.js",
+        filename: '[name].js',
     },
     module: {
         rules: [
@@ -44,5 +42,5 @@ resolve: {
         tinymce: path.resolve(__dirname, "node_modules", "tinymce"),
     },
     },
-    mode: "development",
+    mode: "production",
 };
