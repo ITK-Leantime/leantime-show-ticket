@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* [PR-10](https://github.com/ITK-Leantime/leantime-show-ticket/pull/10)
+  Add worklogs and comments to ui
 * [PR-9](https://github.com/ITK-Leantime/leantime-show-ticket/pull/9)
   Fix release scripts
   Add missing stuff to package.json
