@@ -4,6 +4,9 @@ namespace Leantime\Plugins\ShowTicket\Repositories;
 
 use Leantime\Core\Db\Repository;
 
+/**
+ * Show ticket repository file.
+ */
 class ShowTicket extends Repository
 {
     /**
@@ -14,9 +17,12 @@ class ShowTicket extends Repository
     }
 
     /**
+     *
+     * Gets timesheet by ticket.
+     *
      * @param int $id the ticket id
- * @return array<int, mixed>
- */
+     * @return array<int, mixed>
+    */
     public function getTimesheetsByTicket(int $id): array
     {
         $query = "SELECT
