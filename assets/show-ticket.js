@@ -276,7 +276,6 @@ document.addEventListener("DOMContentLoaded", function () {
         window["new-subtask-date-to-finish-input"].value = "";
         window["new-subtask-plan-hours-input"].value = "";
 
-
         initializeSubtaskInputs(`subtask-${ticketId}`, subtaskDefaultValues);
 
         const container = window["sub-tasks"];
