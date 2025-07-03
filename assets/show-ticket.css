@@ -39,6 +39,15 @@
   --z-modal: 999;
 }
 
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none; /* Remove the default outline */
+  border-color: #4a90e2; /* Change border color */
+  box-shadow: 0 0 5px #4a90e2; /* Add a subtle glow */
+  background-color: #f0f8ff; /* Light background on focus */
+}
+
 .ticket .save-success {
   animation: successAnimation 1s forwards;
 }
@@ -405,11 +414,47 @@ body {
       font-weight: 400;
     }
 
-    h3 {
+    .input-title {
+      all: unset;
+      width: 100%;
+      font-size: var(--font-size-xl);
+      font-weight: 700;
       border-bottom: 1px solid var(--color-border);
       color: var(--color-dark-text);
       line-height: 40px;
       margin: var(--space-md) 0;
+    }
+  }
+
+  .sub-task-new {
+    border-style: dashed;
+    position: relative;
+
+    .button {
+      position: absolute;
+      top: var(--space-md);
+      right: var(--space-md);
+      align-items: center;
+      background-color: var(--color-white);
+      border: 1px solid var(--color-border);
+      cursor: pointer;
+      display: flex;
+      height: var(--button-size);
+      justify-content: center;
+      width: var(--button-size);
+
+      &:disabled {
+        background-color: var(--disabled-button-background);
+        cursor: not-allowed;
+      }
+
+      &:hover {
+        background-color: var(--color-gray-hover);
+      }
+
+      i {
+        color: var(--color-dark-text);
+      }
     }
   }
 

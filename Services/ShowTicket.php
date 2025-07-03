@@ -181,6 +181,7 @@ class ShowTicket
             'dependingTicketId' => $values['dependingTicketId'] ?? '',
             'milestoneid' => $values['milestoneid'] ?? '',
             'dateToFinish' => $values['dateToFinish'],
+            'dependingTicketId' => $values['dependingTicketId'] ?? '',
         ];
 
         return $this->ticketService->addTicket($values);

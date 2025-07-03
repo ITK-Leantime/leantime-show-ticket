@@ -224,15 +224,66 @@
                                 </div>
                             @endif
                             <div>
-                                @if (count($subtasks) > 0)
-                                    <h2 class="sub-header">{{ __('showTicket.subtasks-headline') }}</h2>
-                                    <div class="sub-tasks">
+                                <h2 class="sub-header">{{ __('showTicket.subtasks-headline') }}</h2>
+                                <div class="sub-tasks" id="sub-tasks">
+                                    {{-- create new subtask --}}
+                                    <div class="sub-task sub-task-new" id="new-sub-task">
+                                        <input type="text" class="input-title" id="new-subtask-input-title"
+                                            placeholder="{{ __('showTicket.new-sub-task-title-input') }}" />
+                                        <button type="button" class="button" disabled id="save-sub-ticket-button">
+                                            <span class="sr-only">
+                                                {{ __('showTicket.save-sub-ticket') }}
+                                            </span>
+                                            <i class="fa-solid fa-floppy-disk"></i>
+                                        </button>
+                                        <div class="sub-task-controls">
+                                            <label class="sr-only"
+                                                for='new-subtask-status-label'>{{ __('showTicket.status-label') }}</label>
+                                            <select defaultValue="" id='new-subtask-status-label' class="select">
+                                                <option value="">
+                                                    {{ __('showTicket.status-label-pick') }}
+                                                </option>
+                                                @foreach ($statusLabels as $key => $statusLabel)
+                                                    <option value="{{ $key }}">
+                                                        {{ $statusLabel['name'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <label class="sr-only"
+                                                for='new-subtask-user-select-editor'>{{ __('showTicket.editor-label') }}</label>
+                                            <select class="select" defaultValue="" id='new-subtask-user-select-editor'>
+                                                <option value="">
+                                                    {{ __('showTicket.editor-pick') }}
+                                                </option>
+                                                @foreach ($allUsers as $user)
+                                                    <option value={{ $user['id'] }}>
+                                                        {{ $user['firstname'] }}
+                                                        {{ $user['lastname'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                            <label class="sr-only"
+                                                for='new-subtask-date-to-finish-input'>{{ __('showTicket.date-to-finish-label') }}</label>
+                                            <input type="date" type="text" class="input"
+                                                id='new-subtask-date-to-finish-input' />
+                                            <label class="sr-only"
+                                                for='new-subtask-plan-hours-input'>{{ __('showTicket.plan-hours-label') }}</label>
+                                            <input defaultValue="" type="number" class="input"
+                                                id='new-subtask-plan-hours-input' />
+                                        </div>
+                                    </div>
+                                    {{-- /create new subtask --}}
+                                    @if (count($subtasks) > 0)
                                         @foreach ($subtasks as $subtask)
                                             <div class="sub-task" id='subtask-{{ $subtask['id'] }}'>
-                                                <div class="font-bold">{{ $subtask['projectName'] }}:
+                                                <a href="<?= BASE_URL ?>/ShowTicket/ShowTicket?ticketId={{ $subtask['id'] }}"
+                                                    class="font-bold">
                                                     {{ $subtask['id'] }}
-                                                </div>
-                                                <h3>{{ $subtask['headline'] }}</h3>
+                                                </a>
+                                                <input type="text" class="input-title" id="subtask-title-input"
+                                                    value='{{ $subtask['headline'] }}' />
+
 
                                                 <div class="sub-task-controls">
                                                     <label class="sr-only"
@@ -275,8 +326,41 @@
                                                 </div>
                                             </div>
                                         @endforeach
+                                    @endif
+                                    {{-- subtask template --}}
+                                    <div class="sub-task" style="display:none" id="next-sub-task">
+                                        <a href="#" class="font-bold" id="new-sub-task-id">
+                                        </a>
+                                        <input type="text" class="input-title" id="next-sub-task-input-title" />
+                                        <div class="sub-task-controls">
+                                            <select defaultValue="" id='next-sub-task-status-label' class="select">
+                                                <option value="">
+                                                    {{ __('showTicket.status-label-pick') }}
+                                                </option>
+                                                @foreach ($statusLabels as $key => $statusLabel)
+                                                    <option value="{{ $key }}">
+                                                        {{ $statusLabel['name'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <select class="select" defaultValue="" id='next-sub-task-user-select-editor'>
+                                                <option value="">
+                                                    {{ __('showTicket.editor-pick') }}
+                                                </option>
+                                                @foreach ($allUsers as $user)
+                                                    <option value={{ $user['id'] }}>
+                                                        {{ $user['firstname'] }}
+                                                        {{ $user['lastname'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <input type="date" type="text" class="input"
+                                                id='next-sub-task-date-to-finish-input' />
+                                            <input type="number" class="input" id='next-sub-task-plan-hours-input' />
+                                        </div>
                                     </div>
-                                @endif
+                                    {{-- /subtask template --}}
+                                </div>
                             </div>
                         </div>
                         <section class="tabs-container">

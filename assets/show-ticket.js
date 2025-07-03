@@ -22,6 +22,15 @@ import {
   initateTags,
 } from "./helpers";
 
+let subtaskDefaultValues = {};
+
+function getElementIdsWithPrefix(prefix) {
+  const regex = new RegExp(`^${prefix}\\d+$`);
+  return Array.from(document.querySelectorAll(`[id^="${prefix}"]`))
+    .filter(({ id }) => regex.test(id))
+    .map(({ id }) => id);
+}
+
 async function simpleSaveTicketWrapper(
   input,
   key,
@@ -171,11 +180,121 @@ async function saveDateToFinish(input, defaultValue, id = null) {
   }
 }
 
+async function createSubTicket(input) {
+  startSpinner();
+  try {
+    const response = await fetch("/ShowTicket/CreateTicket/createTicket", {
+      method: "POST",
+      body: JSON.stringify({ input }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const { ticket } = await response.json();
+    stopSpinner();
+    return { ticketId: ticket };
+  } catch (error) {
+    stopSpinner();
+    return { error: true, errorText: error };
+  }
+}
+
 function arraysAreEqual(arr1, arr2) {
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  window["new-subtask-input-title"]?.addEventListener("input", () => {
+    if (window["new-subtask-input-title"].value?.length > 0) {
+      window["save-sub-ticket-button"].removeAttribute("disabled");
+    }
+  });
+
+  window["save-sub-ticket-button"]?.addEventListener(
+    "click",
+    async function () {
+      const projectId = document
+        .querySelector("main")
+        .getAttribute("project-id");
+      const { id } = document.querySelector("main");
+
+      const saveObject = {
+        headline: window["new-subtask-input-title"].value,
+        dependingTicketId: id, // this is where it becomes a sub task
+        status: window["new-subtask-status-label"].value,
+        editorId: window["new-subtask-user-select-editor"].value,
+        dateToFinish: window["new-subtask-date-to-finish-input"].value
+          ? formatDate(window["new-subtask-date-to-finish-input"].value)
+          : "",
+        projectId: projectId,
+        planHours: window["new-subtask-plan-hours-input"].value,
+      };
+      const { ticketId, error, errorText } = await createSubTicket(saveObject);
+      if (error) {
+        // todo show error
+        console.error(errorText ?? "Unknown error");
+      } else {
+        // If task is created, it will be added to the dom
+        const subtask = window["next-sub-task"];
+        subtask.id = `subtask-${ticketId}`;
+
+        // Fill out new task
+        subtask.querySelector("#new-sub-task-id").textContent = ticketId;
+        subtask
+          .querySelector("#new-sub-task-id")
+          .setAttribute("href", `/ShowTicket/ShowTicket?ticketId=${ticketId}`);
+        subtask.querySelector("#new-sub-task-id").id = "";
+        subtask.querySelector("#next-sub-task-input-title").value =
+          window["new-subtask-input-title"].value;
+        subtask.querySelector("#next-sub-task-status-label").value =
+          window["new-subtask-status-label"].value;
+        subtask.querySelector("#next-sub-task-status-label").id =
+          `subtask-status-select-${ticketId}`;
+        subtask.querySelector("#next-sub-task-user-select-editor").value =
+          window["new-subtask-user-select-editor"].value;
+        subtask.querySelector("#next-sub-task-user-select-editor").id =
+          `subtask-user-select--${ticketId}`;
+        subtask.querySelector("#next-sub-task-date-to-finish-input").value =
+          window["new-subtask-date-to-finish-input"].value;
+        subtask.querySelector("#next-sub-task-date-to-finish-input").id =
+          `subtask-date-to-finish-input-${ticketId}`;
+
+        subtask.querySelector("#next-sub-task-plan-hours-input").value =
+          window["new-subtask-plan-hours-input"].value;
+        subtask.querySelector("#next-sub-task-plan-hours-input").id =
+          `subtask-plan-hours-input-${ticketId}`;
+
+        // Reset values
+        window["new-subtask-input-title"].value = "";
+        window["new-subtask-status-label"].value = "";
+        window["new-subtask-user-select-editor"].value = "";
+        window["new-subtask-date-to-finish-input"].value = "";
+        window["new-subtask-plan-hours-input"].value = "";
+
+
+        initializeSubtaskInputs(`subtask-${ticketId}`, subtaskDefaultValues);
+
+        const container = window["sub-tasks"];
+
+        if (subtask && container) {
+          subtask.style.display = "";
+
+          const firstChild = container.firstElementChild;
+          if (firstChild) {
+            container.insertBefore(subtask, firstChild.nextSibling);
+          } else {
+            container.appendChild(subtask);
+          }
+        }
+      }
+    },
+  );
+
   // Some default values, if there is a save error.
   const descriptionDefaultValue = tinymce?.activeEditor?.getContent();
   const statusDefaultValue = document.getElementById("status-select")?.value;
@@ -401,12 +520,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Get all elements with ids that start with delete-comment- and is followed by *some* numbers (which is an id).
-  const commentIds = Array.from(
-    document.querySelectorAll('[id^="delete-comment-"]'),
-  )
-    .filter(({ id }) => /^delete-comment-\d+$/.test(id))
-    .map(({ id }) => id);
-
+  const commentIds = getElementIdsWithPrefix("delete-comment-");
   commentIds.forEach((subtaskId) => {
     const id = subtaskId.replace("delete-comment-", "");
 
@@ -452,68 +566,60 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  function initializeSubtaskInputs(subtaskId, subtaskDefaultValues) {
+    const id = subtaskId.replace("subtask-", "");
+
+    const fields = [
+      {
+        key: "title-input",
+        handler: simpleSaveTicketWrapper,
+        fieldName: "title",
+      },
+      {
+        key: "status-select",
+        handler: simpleSaveTicketWrapper,
+        fieldName: "status",
+      },
+      {
+        key: "user-select",
+        handler: simpleSaveTicketWrapper,
+        fieldName: "editorId",
+      },
+      { key: "date-to-finish-input", handler: saveDateToFinish },
+      {
+        key: "plan-hours-input",
+        handler: simpleSaveTicketWrapper,
+        fieldName: "planHours",
+      },
+    ];
+
+    fields.forEach(({ key, handler, fieldName }) => {
+      const inputKey = `subtask-${key}-${id}`;
+      const inputElement = window[inputKey];
+      if (!inputElement) return;
+
+      // Save the default value
+      subtaskDefaultValues[inputKey] = inputElement.value;
+
+      // Set up change listener
+      inputElement.addEventListener("change", function () {
+        const previousValue = subtaskDefaultValues[inputKey];
+        if (fieldName) {
+          handler(inputElement, fieldName, previousValue, id);
+        } else {
+          handler(inputElement, previousValue, id); // For saveDateToFinish
+        }
+      });
+    });
+  }
+
   // Get all elements with ids that start with subtask and is followed by *some* numbers (which is an id).
-  const subtasksIds = Array.from(document.querySelectorAll('[id^="subtask-"]'))
-    .filter(({ id }) => /^subtask-\d+$/.test(id))
-    .map(({ id }) => id);
+  const subtasksIds = getElementIdsWithPrefix("subtask-");
+
   // Add event listeners to sub task children, this could potentially be a lot, I don't know
   // If users a prone to subtasks in leantime. Perhaps we should limit this some time.
-  let subtaskDefaultValues = {};
   subtasksIds.forEach((subtaskId) => {
-    const id = subtaskId.replace("subtask-", "");
-    subtaskDefaultValues[`subtask-status-select-${id}`] =
-      window[`subtask-status-select-${id}`].value;
-    subtaskDefaultValues[`subtask-user-select-${id}`] =
-      window[`subtask-user-select-${id}`].value;
-    subtaskDefaultValues[`subtask-date-to-finish-input-${id}`] =
-      window[`subtask-date-to-finish-input-${id}`].value;
-    subtaskDefaultValues[`subtask-plan-hours-input-${id}`] =
-      window[`subtask-plan-hours-input-${id}`].value;
-
-    window[`subtask-status-select-${id}`].addEventListener(
-      "change",
-      function () {
-        const input = window[`subtask-status-select-${id}`];
-        simpleSaveTicketWrapper(
-          input,
-          "status",
-          subtaskDefaultValues[`subtask-status-select-${id}`],
-          id,
-        );
-      },
-    );
-    window[`subtask-user-select-${id}`].addEventListener("change", function () {
-      const input = window[`subtask-user-select-${id}`];
-      simpleSaveTicketWrapper(
-        input,
-        "editorId",
-        subtaskDefaultValues[`subtask-user-select-${id}`],
-        id,
-      );
-    });
-    window[`subtask-date-to-finish-input-${id}`].addEventListener(
-      "change",
-      function () {
-        const input = window[`subtask-date-to-finish-input-${id}`];
-        saveDateToFinish(
-          input,
-          subtaskDefaultValues[`subtask-date-to-finish-input-${id}`],
-          id,
-        );
-      },
-    );
-    window[`subtask-plan-hours-input-${id}`].addEventListener(
-      "change",
-      function () {
-        const input = window[`subtask-plan-hours-input-${id}`];
-        simpleSaveTicketWrapper(
-          input,
-          "planHours",
-          subtaskDefaultValues[`subtask-plan-hours-input-${id}`],
-          id,
-        );
-      },
-    );
+    initializeSubtaskInputs(subtaskId, subtaskDefaultValues);
   });
 });
 
