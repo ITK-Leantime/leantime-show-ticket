@@ -293,23 +293,24 @@
                                 </button>
                             </div>
 
-                            <div id="worklog-content" role="tabpanel" aria-labelledby="tab-worklogs" class="activity-container tab-content">
-                                    <h2 class="h2 sr-only">{{ __('showTicket.tabs-header-work-logs') }}</h2>
-                                    <div class="timeline">
-                                        @foreach ($worklogs as $worklog)
-                                            <div class="worklog">
-                                                <div class="worklog-icon"><i class="fa-solid fa-clock"></i></div>
-                                                <div>
-                                                    {!! sprintf(__('showTicket.user-logged'), $worklog['display_name'], $worklog['loggedHours']) !!}
-                                                </div>
-                                                <span>
-                                               {{ $worklog['description']}}
-                                                </span>
-                                                <div class="date">{{ $worklog['display_date'] }}</div>
+                            <div id="worklog-content" role="tabpanel" aria-labelledby="tab-worklogs"
+                                class="activity-container tab-content">
+                                <h2 class="h2 sr-only">{{ __('showTicket.tabs-header-work-logs') }}</h2>
+                                <div class="timeline">
+                                    @foreach ($worklogs as $worklog)
+                                        <div class="worklog">
+                                            <div class="worklog-icon"><i class="fa-solid fa-clock"></i></div>
+                                            <div>
+                                                {!! sprintf(__('showTicket.user-logged'), $worklog['display_name'], $worklog['loggedHours']) !!}
                                             </div>
-                                        @endforeach
-                                    </div>
+                                            <span>
+                                                {{ $worklog['description'] }}
+                                            </span>
+                                            <div class="date">{{ $worklog['display_date'] }}</div>
+                                        </div>
+                                    @endforeach
                                 </div>
+                            </div>
 
 
                             <div id="comments-content" role="tabpanel" aria-labelledby="tab-comments"
@@ -373,11 +374,11 @@
                                     @endforeach
                                 </div>
                             </div>
-                            
+
             </div>
         </div>
     </div>
-   
+
     </section>
 
     </main>
