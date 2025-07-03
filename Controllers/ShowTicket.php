@@ -219,11 +219,13 @@ class ShowTicket extends Controller
                     $replies = $this->commentRepository->getReplies($comment['id']);
                     foreach ($replies as &$reply) {
                         // Display date, this can probably be done in a better way...
+                        /** @phpstan-ignore-next-line */
                         $reply['display_date'] = dtHelper()->parseDbDateTime($reply['date'])->setToUserTimezone()->format('Y-m-d H:i:s');
                         $reply['editable'] = session('userdata.id') === $reply['userId'];
                     }
                     $comment['replies'] = $replies;
                     $comment['editable'] = session('userdata.id') === $comment['userId'];
+                    /** @phpstan-ignore-next-line */
                     $comment['display_date'] = dtHelper()->parseDbDateTime($comment['date'])->setToUserTimezone()->format('Y-m-d H:i:s');
                 }
 
@@ -231,6 +233,7 @@ class ShowTicket extends Controller
 
                 foreach ($worklogs as &$worklog) {
                     // Display date, this can probably be done in a better way...
+                    /** @phpstan-ignore-next-line */
                     $worklog['display_date'] = dtHelper()->parseDbDateTime($worklog['workdate'])->setToUserTimezone()->format('Y-m-d');
 
                     // Username for display
