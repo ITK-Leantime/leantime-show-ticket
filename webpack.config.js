@@ -37,10 +37,10 @@ module.exports = {
         ],
     }),
   ],
-    resolve: {
-        alias: {
-            tinymce: path.resolve(__dirname, "node_modules", "tinymce"),
-        },
+resolve: {
+    alias: {
+        tinymce: path.resolve(__dirname, "node_modules", "tinymce"),
+    },
     },
     mode: "production",
 };
